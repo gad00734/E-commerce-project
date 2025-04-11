@@ -1,0 +1,118 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+:root {
+  --color-primary: #2D6A4F;
+  --color-secondary: #95D5B2;
+  --color-accent: #40916C;
+  --color-bg: #F8F9FA;
+  --color-dark: #212529;
+  --color-light: #FFFFFF;
+  --color-danger: #D00000;
+
+  --font-main: 'Poppins', sans-serif;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--color-bg);
+  color: var(--color-dark);
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--color-primary);
+}
+
+.navbar-brand,
+.nav-link {
+  color: var(--color-light) !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: var(--color-secondary) !important;
+}
+
+/* Titles */
+.hero-title,
+.section-title {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+  border: none;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: var(--color-accent);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-dark);
+  border: none;
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background-color: #74c69d;
+  color: var(--color-dark);
+}
+
+/* Product Cards */
+.product-card {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 1rem;
+  background-color: #fff;
+  transition: 0.3s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+  max-width: 100%;
+  border-radius: 5px;
+}
+
+.product-card h5 {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Footer */
+footer {
+  background-color: #e9ecef;
+  color: var(--color-dark);
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Inputs & Selects */
+input.form-control,
+select.form-select {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* Responsive Fixes */
+@media (max-width: 768px) {
+  .navbar-nav {
+    text-align: center;
+  }
+
+  .product-card {
+    margin-bottom: 1rem;
+  }
+}
