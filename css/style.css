@@ -1,118 +1,206 @@
-/* Import Google Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
 :root {
-  --color-primary: #2D6A4F;
-  --color-secondary: #95D5B2;
-  --color-accent: #40916C;
-  --color-bg: #F8F9FA;
+  --color-primary: #2d6a4f;
+  --color-secondary: #95d5b2;
+  --color-accent: #40916c;
+  --color-bg: #f8f9fa;
   --color-dark: #212529;
-  --color-light: #FFFFFF;
-  --color-danger: #D00000;
+  --color-light: #ffffff;
+  --color-danger: #d00000;
+  --font-main: "Poppins", sans-serif;
+}
 
-  --font-main: 'Poppins', sans-serif;
+html {
+  font-size: 16px;
 }
 
 body {
+  margin: 0;
   font-family: var(--font-main);
   background-color: var(--color-bg);
   color: var(--color-dark);
-  margin: 0;
-  padding: 0;
+  font-size: 1rem;
 }
 
-/* Navbar */
-.navbar {
-  background-color: var(--color-primary);
-}
-
-.navbar-brand,
-.nav-link {
-  color: var(--color-light) !important;
-  font-weight: 500;
-}
-
-.nav-link:hover {
-  color: var(--color-secondary) !important;
-}
-
-/* Titles */
-.hero-title,
-.section-title {
+a {
   color: var(--color-primary);
-  font-weight: 600;
+  text-decoration: none;
 }
 
-/* Buttons */
-.btn-primary {
-  background-color: var(--color-primary);
-  color: var(--color-light);
-  border: none;
+a:hover {
+  text-decoration: underline;
+}
+
+.login-container {
+  max-width: 420px;
+  margin: 80px auto;
+  padding: 30px;
+  background: var(--color-light);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+  color: var(--color-primary);
+  font-size: 1.8rem;
   font-weight: 600;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-label {
+  font-weight: 600;
+  color: var(--color-dark);
+}
+
+.form-control {
+  border-radius: 8px;
+  border: 1px solid var(--color-secondary);
+  padding: 10px 14px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 6px rgba(45, 106, 79, 0.25);
+  outline: none;
+}
+
+.btn-primary {
+  background-color: var(--color-primary) !important;
+  color: var(--color-light) !important;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn-primary:hover {
   background-color: var(--color-accent);
 }
 
-.btn-secondary {
-  background-color: var(--color-secondary);
-  color: var(--color-dark);
-  border: none;
-  font-weight: 500;
+.error-message {
+  color: var(--color-danger);
+  font-size: 0.9rem;
+  margin-top: 6px;
+  display: none;
 }
 
-.btn-secondary:hover {
-  background-color: #74c69d;
-  color: var(--color-dark);
+p {
+  font-size: 1rem;
+  text-align: center;
+  margin-top: 20px;
 }
 
-/* Product Cards */
-.product-card {
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 1rem;
-  background-color: #fff;
-  transition: 0.3s ease;
-}
-
-.product-card:hover {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.product-card img {
-  max-width: 100%;
-  border-radius: 5px;
-}
-
-.product-card h5 {
+p a {
   color: var(--color-primary);
   font-weight: 600;
 }
 
-/* Footer */
-footer {
-  background-color: #e9ecef;
-  color: var(--color-dark);
-  padding: 1rem 0;
-  text-align: center;
-  font-size: 14px;
+p a:hover {
+  text-decoration: underline;
 }
 
-/* Inputs & Selects */
-input.form-control,
-select.form-select {
+/* Sidebar */
+.sidebar {
+  background-color: var(--color-primary);
+  color: white;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  overflow-y: auto;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+}
+
+.sidebar .list-group-item {
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: 500;
+  padding: 12px 20px;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar .list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-light);
+}
+
+.sidebar .list-group-item i {
+  font-size: 1.1rem;
+}
+
+/* Main content */
+.content {
+  margin-left: 250px;
+  padding: 20px;
+  background-color: var(--color-light);
   border-radius: 8px;
-  border: 1px solid #ccc;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: margin-left 0.3s ease;
 }
 
-/* Responsive Fixes */
+/* Cards */
+.card.bg-success {
+  background-color: var(--color-primary) !important;
+}
+
+.card.bg-primary {
+  background-color: var(--color-accent) !important;
+}
+
+.card.bg-warning {
+  background-color: var(--color-danger) !important;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.card-text {
+  font-size: 1rem;
+}
+
+/* Table */
+table {
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  text-align: center;
+  padding: 12px;
+}
+
+th {
+  background-color: var(--color-primary);
+  color: var(--color-light);
+}
+
+td {
+  background-color: var(--color-light);
+}
+
+/* Responsive Sidebar */
 @media (max-width: 768px) {
-  .navbar-nav {
-    text-align: center;
+  .sidebar {
+    transform: translateX(-100%);
   }
 
-  .product-card {
-    margin-bottom: 1rem;
+  .sidebar.active {
+    transform: translateX(0);
+  }
+
+  .content {
+    margin-left: 0;
+    width: 100%;
   }
 }
