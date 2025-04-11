@@ -1,3 +1,4 @@
+/* Root Variables */
 :root {
   --color-primary: #2d6a4f;
   --color-secondary: #95d5b2;
@@ -9,6 +10,7 @@
   --font-main: "Poppins", sans-serif;
 }
 
+/* General Styles */
 html {
   font-size: 16px;
 }
@@ -30,6 +32,7 @@ a:hover {
   text-decoration: underline;
 }
 
+/* Forms */
 .login-container {
   max-width: 420px;
   margin: 80px auto;
@@ -66,6 +69,7 @@ h3 {
   outline: none;
 }
 
+/* Button Styles */
 .btn-primary {
   background-color: var(--color-primary) !important;
   color: var(--color-light) !important;
@@ -136,7 +140,7 @@ p a:hover {
   font-size: 1.1rem;
 }
 
-/* Main content */
+/* Main Content */
 .content {
   margin-left: 250px;
   padding: 20px;
@@ -168,7 +172,7 @@ p a:hover {
   font-size: 1rem;
 }
 
-/* Table */
+/* Tables */
 table {
   margin-top: 20px;
   border-collapse: collapse;
