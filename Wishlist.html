@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wishlist</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="./css./mh.css">
+</head>
+
+<body>
+  <div class="container wishlistContainer">
+    <div class="wishlistHeader">
+      <h3>My Wishlist <span class="badgeCount" id="wishlistCount">0 </span></h3>
+      <input type="text" id="searchInput" class="form-control searchBar" placeholder="Search wishlist...">
+    </div>
+
+    <div class="row g-4" id="wishlistItems">
+    </div>
+  </div>
+
+  <div class="toastContainer">
+    <div id="toastAdd" class="toast text-bg-success border-0 align-items-center" role="alert">
+      <div class="d-flex">
+        <div class="toast-body">
+          Item added to cart!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+
+  <a href="cart.html" class="cartBadge">
+    <span class="badge bg-primary" id="cartBadgeCount">0</span>
+    <i class="bi bi-cart"></i>
+  </a>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="./js/Wishlist.js"></script>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wishlist</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container wishlist-container">
+    
+    <div class="wishlist-header">
+      <h3>My Wishlist <span class="badge-count" id="wishlist-count">3 items</span></h3>
+      <input type="text" id="search-input" class="form-control search-bar" placeholder="Search wishlist...">
+    </div>
+
+    <div class="row g-4" id="wishlist-items">
+      <div class="col-md-4 wishlist-item" data-name="Fresh Strawberries">
+        <div class="wishlist-card">
+          <img src="image/product-06.jpg" class="product-img" alt="Fresh Strawberries">
+          <div class="card-body">
+            <h5>Fresh Strawberries</h5>
+            <p class="text-muted">$36.00</p>
+            <div class="d-flex justify-content-between">
+              <button class="btn btn-add add-to-cart"><i class="bi bi-cart-plus"></i> Add to Cart</button>
+              <button class="btn btn-remove remove-item"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 wishlist-item" data-name="Lightweight Jacket">
+        <div class="wishlist-card">
+          <img src="image/product-14.jpg" class="product-img" alt="Lightweight Jacket">
+          <div class="card-body">
+            <h5>Lightweight Jacket</h5>
+            <p class="text-muted">$16.00</p>
+            <div class="d-flex justify-content-between">
+              <button class="btn btn-add add-to-cart"><i class="bi bi-cart-plus"></i> Add to Cart</button>
+              <button class="btn btn-remove remove-item"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4 wishlist-item" data-name="Black Sneakers">
+        <div class="wishlist-card">
+          <img src="image/product-15.jpg" class="product-img" alt="Black Sneakers">
+          <div class="card-body">
+            <h5>Black Sneakers</h5>
+            <p class="text-muted">$58.00</p>
+            <div class="d-flex justify-content-between">
+              <button class="btn btn-add add-to-cart"><i class="bi bi-cart-plus"></i> Add to Cart</button>
+              <button class="btn btn-remove remove-item"><i class="bi bi-x-lg"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="toast-container">
+    <div id="toast-add" class="toast text-bg-success border-0 align-items-center" role="alert">
+      <div class="d-flex">
+        <div class="toast-body">
+          Item added to cart!
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    </div>
+  </div>
+</body>
+</html> -->

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Store</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="./css/ah.css" rel="stylesheet">
+
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">My Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Shop</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+    
+            <!-- Slides -->
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="hero" style="background: url('./assets/img/bg.jpg') no-repeat center center/cover;">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h1 class="text-light">Welcome to Our Store</h1>
+                            <p>Discover the latest products and exclusive deals. Shop with confidence!</p>
+                            <a href="#" class="btn btn-primary">Explore Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero" style="background: url('./assets/img/bg2.jpg') no-repeat center center/cover;">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h1 class="text-light">Exclusive Deals</h1>
+                            <p>Unbeatable prices and premium quality.</p>
+                            <a href="#" class="btn btn-primary">Shop Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="hero" style="background: url('./assets/img/hed.jpg') no-repeat center center/cover;">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h1 class="text-light">Best Products</h1>
+                            <p>Quality you can trust, delivered to your doorstep.</p>
+                            <a href="#" class="btn btn-primary">View Products</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Controls -->
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+    
+
+        <!-- Features Section -->
+        <div class="features py-5">
+            <div class="container">
+                <h2 class="text-center fw-bold mb-4">Why Choose Us?</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 text-center shadow-sm border rounded">
+                            <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="bi bi-gem fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold">High Quality</h5>
+                            <p class="text-muted">Our products are made with the best materials to ensure satisfaction.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 text-center shadow-sm border rounded">
+                            <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="bi bi-truck fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold">Fast Delivery</h5>
+                            <p class="text-muted">Get your items delivered quickly and reliably to your doorstep.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card p-4 text-center shadow-sm border rounded">
+                            <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="bi bi-headset fs-2"></i>
+                            </div>
+                            <h5 class="fw-bold">Customer Support</h5>
+                            <p class="text-muted">We’re here to help with any questions or concerns, 24/7.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+
+        <!-- Product Section -->
+        <h2 class="text-center fw-bold mb-4">Our Products</h2>
+        <div class="products">
+            <div class="container-fluid my-4">
+                <div class="row g-3" id="product-list">
+                    <!-- المنتجات سيتم إضافتها هنا ديناميكيًا -->
+                </div>
+            </div>
+        
+            <!-- Call to Action -->
+            <div class="cta">
+                <h2>Ready to Start Shopping?</h2>
+                <p>Sign up now and enjoy exclusive discounts and offers!</p>
+                <a href="#" class="btn btn-primary">Sign Up</a>
+            </div>
+        </div>
+        
+        
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 My Store. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./js/index.js"></script>
+
+    <script>
+
+
+    </script>
+</body>
+</html>
