@@ -1,3 +1,45 @@
+// js/cart.js
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('data.json') // Path to your JSON file
+    .then(response => response.json())
+    .then(data => {
+      displayCartItems(data); // You can modify this function for your cart logic
+    })
+    .catch(error => {
+      console.error('Error fetching JSON:', error);
+    });
+});
+
+function displayCartItems(products) {
+  const cartContainer = document.getElementById('cartItems');
+  cartContainer.innerHTML = ''; // Clear existing
+
+  products.forEach(product => {
+    const item = document.createElement('div');
+    item.className = 'card mb-3';
+    item.innerHTML = `
+      <div class="row g-0">
+        <div class="col-md-4">
+          <img src="${product.image}" class="img-fluid rounded-start" alt="${product.title}">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <h5 class="card-title">${product.title}</h5>
+            <p class="card-text">${product.description}</p>
+            <p class="card-text"><strong>$${product.price}</strong></p>
+          </div>
+        </div>
+      </div>
+    `;
+    cartContainer.appendChild(item);
+  });
+
+  // Optional: update total price
+  const total = products.reduce((sum, p) => sum + p.price, 0).toFixed(2);
+  document.getElementById('totalPrice').textContent = `$${total}`;
+  document.getElementById('cartCount').textContent = `${products.length} items`;
+}
+
 
 function returnCartData() {
   const cartItemsContainer = document.getElementById('cartItems');

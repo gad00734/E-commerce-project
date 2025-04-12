@@ -30,6 +30,15 @@
                 <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                <!-- Cart Icon in Navbar -->
+                <li class="nav-item">
+                    <a class="nav-link" href="cart.html">
+                        <i class="bi bi-cart-fill" id="cart-icon" style="font-size: 1.5rem;"></i>
+                        <span id="cart-count" class="badge bg-danger rounded-pill">0</span>
+                    </a>
+                </li>
+                
+
             </ul>
           </div>
         </div>
@@ -47,7 +56,7 @@
             <!-- Slides -->
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <div class="hero" style="background: url('./assets/img/bg.jpg') no-repeat center center/cover;">
+                    <div class="hero" style="background: url('img/bg.jpg') no-repeat center center/cover;">
                         <div class="carousel-caption d-none d-md-block">
                             <h1 class="text-light">Welcome to Our Store</h1>
                             <p>Discover the latest products and exclusive deals. Shop with confidence!</p>
@@ -56,7 +65,7 @@
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <div class="hero" style="background: url('./assets/img/bg2.jpg') no-repeat center center/cover;">
+                    <div class="hero" style="background: url('img/bg2.jpg') no-repeat center center/cover;">
                         <div class="carousel-caption d-none d-md-block">
                             <h1 class="text-light">Exclusive Deals</h1>
                             <p>Unbeatable prices and premium quality.</p>
@@ -65,7 +74,7 @@
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <div class="hero" style="background: url('./assets/img/hed.jpg') no-repeat center center/cover;">
+                    <div class="hero" style="background: url('img/hed.jpg') no-repeat center center/cover;">
                         <div class="carousel-caption d-none d-md-block">
                             <h1 class="text-light">Best Products</h1>
                             <p>Quality you can trust, delivered to your doorstep.</p>
@@ -143,6 +152,26 @@
                 <a href="#" class="btn btn-primary">Sign Up</a>
             </div>
         </div>
+
+        <!-- Product Details Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img id="modal-image" src="" class="img-fluid mb-3" alt="Product Image">
+          <h5 id="modal-title"></h5>
+          <p id="modal-description" class="text-muted"></p>
+          <p class="fw-bold">$<span id="modal-price"></span></p>
+          <p class="text-warning">Rating: <span id="modal-rating"></span> ⭐</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
         
         
     <!-- Footer -->
@@ -152,7 +181,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="./js/index.js"></script>
+    <script src="js/index.js"></script>
 
     <script>
 
