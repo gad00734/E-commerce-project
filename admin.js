@@ -7,7 +7,6 @@
     const form = document.getElementById("productForm");
     form.classList.toggle("d-none");
 
-    // reset form state
     if (!editMode) {
       document.getElementById("productForm").reset();
       document.getElementById("productSubmitBtn").textContent = "Add";
@@ -23,7 +22,6 @@
     const qty = document.getElementById("productQty").value;
 
     if (editMode) {
-      // تعديل المنتج الحالي
       currentEditingRow.cells[2].textContent = name;
       currentEditingRow.cells[3].textContent = category;
       currentEditingRow.cells[4].textContent = `$${price}`;
@@ -33,7 +31,6 @@
       currentEditingRow = null;
       document.getElementById("productSubmitBtn").textContent = "Add";
     } else {
-      // إضافة منتج جديد
       const tbody = document.querySelector("#products table tbody");
       const tr = document.createElement("tr");
 
@@ -52,8 +49,6 @@
       tbody.appendChild(tr);
       productId++;
     }
-
-    // Reset & Hide Form
     this.reset();
     this.classList.add("d-none");
   });
@@ -77,13 +72,11 @@
     document.getElementById("productPrice").value = price;
     document.getElementById("productQty").value = qty;
 
-    // عرض الفورم لو مش ظاهر
     const form = document.getElementById("productForm");
     if (form.classList.contains("d-none")) {
       form.classList.remove("d-none");
     }
 
-    // تفعيل وضع التعديل
     editMode = true;
     currentEditingRow = row;
     document.getElementById("productSubmitBtn").textContent = "Update";
