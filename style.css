@@ -1,0 +1,90 @@
+:root {
+    --color-primary: #2D6A4F;
+    --color-secondary: #95D5B2;
+    --color-accent: #40916C;
+    --color-bg: #F8F9FA;
+    --color-dark: #212529;
+    --color-light: #FFFFFF;
+    --color-danger: #D00000;
+    --font-main: 'Poppins', sans-serif;
+  }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #F8F9FA;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #2D6A4F;
+      min-height: 100vh;
+      color: white;
+      padding: 20px;
+    }
+
+    .sidebar h4 {
+      margin-bottom: 30px;
+    }
+
+    .sidebar a {
+      display: block;
+      padding: 10px 15px;
+      color: white;
+      text-decoration: none;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      transition: background 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #40916C;
+    }
+
+    .content {
+      padding: 40px;
+      flex-grow: 1;
+    }
+
+    .card {
+      background-color: #ffffff;
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .product-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      background-color: #2D6A4F;
+      border-color: #2D6A4F;
+      border-radius: 20px;
+      padding: 6px 16px;
+    }
+
+    .btn-primary:hover {
+      background-color: #40916C;
+      border-color: #40916C;
+    }
+
+    .btn-danger {
+      background-color: #D00000;
+      border-color: #D00000;
+    }
+
+    .btn-danger:hover {
+      background-color: #a60000;
+      border-color: #a60000;
+    }
+
+    table th, table td {
+      vertical-align: middle;
+    }
+
+    img.img-thumbnail {
+      max-width: 50px;
+    }

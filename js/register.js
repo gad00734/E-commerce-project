@@ -1,4 +1,3 @@
-
 const registerForm = document.getElementById('registerForm');
 const registerError = document.getElementById('registerError');
 const nameField = document.getElementById('name');
@@ -6,66 +5,47 @@ const emailField = document.getElementById('email');
 const passwordField = document.getElementById('password');
 const confirmPasswordField = document.getElementById('confirmPassword');
 
-
-registerForm.addEventListener('submit', async function (e) {
-   
+registerForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    
-   
+
     registerError.style.display = 'none';
 
-    
-    const name = nameField.value;
-    const email = emailField.value;
+    const name = nameField.value.trim();
+    const email = emailField.value.trim();
     const password = passwordField.value;
     const confirmPassword = confirmPasswordField.value;
 
- 
-    if (name === "" || email === "" || password === "" || confirmPassword === "") {
+    if (!name || !email || !password || !confirmPassword) {
+        registerError.textContent = "Please fill in all fields.";
         registerError.style.display = 'block';
-        registerError.textContent = 'Please fill in all fields.';
-        return;  
+        return;
     }
 
-  
     if (password !== confirmPassword) {
+        registerError.textContent = "Passwords do not match.";
         registerError.style.display = 'block';
-        registerError.textContent = 'Passwords do not match.';
-        return; 
+        return;
     }
 
-    registerError.style.display = 'none';
-    registerError.textContent = '';
-
-    
-    const userData = {
+   
+    const user = {
         name,
         email,
-        password
+        password,
     };
 
-    try {
-        
-        const response = await fetch('/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(userData)
-        });
-
-        const data = await response.json();  
-
-        if (data.success) {
-            
-            window.location.href = "Dashboard.html";  
-        } else {
-            registerError.style.display = 'block';
-            registerError.textContent = data.message || 'Something went wrong!';
-        }
-    } catch (error) {
-        
+   
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    if (users.some(u => u.email === email)) {
+        registerError.textContent = "Email is already registered.";
         registerError.style.display = 'block';
-        registerError.textContent = 'Error occurred, please try again later.';
+        return;
     }
+
+    users.push(user);
+    localStorage.setItem('users', JSON.stringify(users));
+
+   
+    sessionStorage.setItem("registerSuccess", "Account created successfully! Please log in.");
+    window.location.href = "Login.html";
 });

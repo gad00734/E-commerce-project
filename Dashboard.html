@@ -2,10 +2,10 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | E-Commerce</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="style.css" />
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
     <!-- Bootstrap -->
@@ -35,10 +35,10 @@
                 <a href="manage-categories.html" class="list-group-item list-group-item-action">
                     <i class="bi bi-tags me-2"></i> Manage Categories
                 </a>
-                <a href="admin-orders.html" class="list-group-item list-group-item-action">
+                <a href="orders.html" class="list-group-item list-group-item-action">
                     <i class="bi bi-cart-check me-2"></i> Orders
                 </a>
-                <a href="login.html" class="list-group-item list-group-item-action">
+                <a href="#" id="logoutLink" class="list-group-item list-group-item-action">
                     <i class="bi bi-box-arrow-right me-2"></i> Logout
                 </a>
             </div>
@@ -78,6 +78,7 @@
                 <a href="add-product.html" class="btn btn-primary">Add Product</a>
                 <a href="add-category.html" class="btn btn-primary">Add Category</a>
             </div>
+            <h5 id="welcomeUser" class="text-end text-muted mb-3">Welcome, Admin</h5>
 
             <h4>Recent Orders</h4>
             <table class="table table-bordered">
@@ -111,15 +112,6 @@
     </div>
 
 
-    <!-- JS -->
-    <script>
-        const toggleBtn = document.getElementById('toggleSidebar');
-        const sidebar = document.getElementById('sidebar');
-
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-    </script>
     <script src="dashbord.js"></script>
 </body>
 
