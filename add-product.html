@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product | Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css1/style.css">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Add New Product</h2>
+
+        <form id="addProductForm">
+            <div class="mb-3">
+                <label for="productName" class="form-label">Product Name</label>
+                <input type="text" class="form-control" id="productName" required>
+                <div id="productNameError" class="error-message d-none">Please enter a product name.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="productPrice" class="form-label">Price ($)</label>
+                <input type="number" class="form-control" id="productPrice" min="0" required>
+                <div id="productPriceError" class="error-message d-none">Please enter a valid price greater than 0.
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="productQuantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="productQuantity" min="0" required>
+                <div id="productQuantityError" class="error-message d-none">Please enter a valid quantity greater than
+                    0.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="productCategory" class="form-label">Category</label>
+                <input type="text" class="form-control" id="productCategory" required>
+                <div id="productCategoryError" class="error-message d-none">Please enter a product category.</div>
+            </div>
+
+            <div class="mb-3">
+                <label for="productDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="productDescription" rows="3" required></textarea>
+                <div id="productDescriptionError" class="error-message d-none">Please enter a product description.</div>
+            </div>
+            <div class="mb-3">
+                <label for="productImage" class="form-label">Product Image</label>
+                <input type="file" class="form-control" id="productImage" accept="image/*" required>
+                <div id="productImageError" class="error-message d-none">Please select a valid image.</div>
+            </div>
+            <div id="imagePreview" class="mb-3 d-none">
+                <label for="imagePreview" class="form-label">Image Preview</label>
+                <img id="preview" src="" alt="Image Preview" class="img-thumbnail">
+            </div>
+
+
+            <button type="submit" class="btn btn-success w-100">Add Product</button>
+        </form>
+
+        <div id="successMessage" class="alert alert-success mt-4 d-none" role="alert">
+            Product added successfully!
+        </div>
+    </div>
+
+    <script src="js/addProduct.js"></script>
+</body>
+
+</html>
