@@ -1,122 +1,143 @@
-// js/cart.js
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('data.json') // Path to your JSON file
-    .then(response => response.json())
-    .then(data => {
-      displayCartItems(data); // You can modify this function for your cart logic
-    })
-    .catch(error => {
-      console.error('Error fetching JSON:', error);
-    });
+  displayCartItems();
 });
 
-function displayCartItems(products) {
-  const cartContainer = document.getElementById('cartItems');
-  cartContainer.innerHTML = ''; // Clear existing
+// Display cart items from localStorage
+function displayCartItems() {
+  const cartItemsContainer = document.getElementById('cartItems');
+  const totalPriceElem = document.getElementById('totalPrice');
+  const cartCount = document.getElementById('cartCount');
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  const clearCartBtn = document.getElementById('clearCartBtn'); // Button to clear cart
+  
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+  cartItemsContainer.innerHTML = '';
+  let total = 0;
+  
+  if (cart.length === 0) {
+    cartItemsContainer.innerHTML = `<p class="text-muted">Your cart is empty.</p>`;
+    cartCount.textContent = `${cart.length} item${cart.length > 1 ? 's' : ''}`;
+    totalPriceElem.textContent = '$0.00';
+    checkoutBtn.disabled = true;
+    clearCartBtn.disabled = true; // Disable Clear Cart button when cart is empty
+    return;
+  }
 
-  products.forEach(product => {
-    const item = document.createElement('div');
-    item.className = 'card mb-3';
-    item.innerHTML = `
-      <div class="row g-0">
-        <div class="col-md-4">
-          <img src="${product.image}" class="img-fluid rounded-start" alt="${product.title}">
+  cart.forEach(item => {
+    const itemTotal = item.price * item.quantity;
+    total += itemTotal;
+
+    const cartItem = document.createElement('div');
+    cartItem.classList.add('card', 'mb-3');
+    cartItem.innerHTML = `
+      <div class="row g-0 align-items-center">
+        <div class="col-md-2">
+          <img src="${item.image}" class="img-fluid rounded-start" alt="${item.title}">
         </div>
-        <div class="col-md-8">
+        <div class="col-md-7">
           <div class="card-body">
-            <h5 class="card-title">${product.title}</h5>
-            <p class="card-text">${product.description}</p>
-            <p class="card-text"><strong>$${product.price}</strong></p>
+            <h5 class="card-title">${item.title}</h5>
+            <div class="d-flex align-items-center">
+              <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, 'decrease')">-</button>
+              <span class="mx-3">${item.quantity}</span>
+              <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, 'increase')">+</button>
+            </div>
+            <p class="card-text text-muted">$${item.price} × ${item.quantity}</p>
+            <p class="card-text fw-bold">Total: $${itemTotal.toFixed(2)}</p>
           </div>
+        </div>
+        <div class="col-md-3 text-end pe-3">
+          <button class="btn btn-sm btn-danger" onclick="removeFromCart(${item.id})">
+            <i class="bi bi-trash"></i> Remove
+          </button>
         </div>
       </div>
     `;
-    cartContainer.appendChild(item);
+    cartItemsContainer.appendChild(cartItem);
   });
 
-  // Optional: update total price
-  const total = products.reduce((sum, p) => sum + p.price, 0).toFixed(2);
-  document.getElementById('totalPrice').textContent = `$${total}`;
-  document.getElementById('cartCount').textContent = `${products.length} items`;
+  totalPriceElem.textContent = `$${total.toFixed(2)}`;
+  cartCount.textContent = `${cart.length} item${cart.length > 1 ? 's' : ''}`;
+  checkoutBtn.disabled = false;
+  clearCartBtn.disabled = false; // Enable Clear Cart button when there are items
 }
 
+// Update item quantity
+function updateQuantity(productId, action) {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const index = cart.findIndex(item => item.id === productId);
 
-function returnCartData() {
-  const cartItemsContainer = document.getElementById('cartItems');
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  let total = 0;
-  cartItemsContainer.innerHTML = '';
-  cart.forEach((product, index) => {
-    const productHTML = `
-        <div class="cartItem d-flex flex-column flex-sm-row align-items-center justify-content-between mb-3" data-index="${index}">
-          <div class="d-flex align-items-center gap-3">
-            <img src="${product.image}" alt="${product.title}" class="productImg">
-            <div>
-              <div class="productName">${product.title}</div>
-              <div class="text-muted">$${product.price} each</div>
-            </div>
-          </div>
-          <div class="quantityBox d-flex align-items-center gap-2">
-            <button class="quantityBtn" onclick="updateQuantity(${index}, -1)">−</button>
-            <span class="quantity">${product.quantity}</span>
-            <button class="quantityBtn" onclick="updateQuantity(${index}, 1)">+</button>
-          </div>
-          <div><strong>$${(product.price * product.quantity).toFixed(2)}</strong></div>
-          <button class="removeBtn" onclick="removeItemFromCart(${index})" title="Remove item">Remove</button>
-        </div>
-      `;
-    cartItemsContainer.insertAdjacentHTML('beforeend', productHTML);
-    total += product.price * product.quantity;
-  });
+  if (index !== -1) {
+    if (action === 'increase') {
+      cart[index].quantity += 1;
+    } else if (action === 'decrease' && cart[index].quantity > 1) {
+      cart[index].quantity -= 1;
+    }
 
-  document.getElementById('totalPrice').textContent = `$${total.toFixed(2)}`;
-  document.getElementById('cartCount').textContent = `${cart.length} items`;
-}
-
-function updateQuantity(index, delta) {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  if (cart[index].quantity + delta > 0) {
-    cart[index].quantity += delta;
     localStorage.setItem('cart', JSON.stringify(cart));
-    returnCartData();
+    displayCartItems();
   }
 }
 
-function removeItemFromCart(index) {
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  cart.splice(index, 1);
+// Remove item from cart
+function removeFromCart(productId) {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  cart = cart.filter(item => item.id !== productId);
   localStorage.setItem('cart', JSON.stringify(cart));
-  returnCartData();
+  displayCartItems();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  const cart = JSON.parse(localStorage.getItem('cart')) || [];
+// Clear all items from cart
+function clearCart() {
+  localStorage.removeItem('cart');
+  displayCartItems();
+}
 
-  if (cart.length > 0) {
-    checkoutBtn.disabled = false;
-  } else {
-    checkoutBtn.disabled = true;
-  }
-});
-
+// Dummy checkout simulation
 function addOrder() {
+  // Get the cart data (you can adjust this according to your cart structure)
   const cart = JSON.parse(localStorage.getItem('cart')) || [];
-  const order = JSON.parse(localStorage.getItem('order')) || [];
-  cart.forEach(product => {
-    order.push({
-      ...product,
-      orderDate: new Date().toISOString()
-    });
-    localStorage.setItem('order', JSON.stringify(order));
-    localStorage.removeItem('cart');
-    returnCartData();
-    alert("Don");
 
-    document.getElementById('checkoutBtn').disabled = true;
-    console.log(order);
+  if (cart.length === 0) {
+    alert("Your cart is empty.");
+    return;
+  }
+  
 
-  })
+  // Generate a dummy order ID and total price for simulation
+  const orderID = '#100' + Math.floor(Math.random() * 1000); // Random order ID
+  const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+
+  // Create order data
+  const orderData = {
+    orderID: orderID,
+    date: new Date().toLocaleDateString(),
+    items: cart,
+    totalPrice: totalPrice,
+    status: 'Pending'
+  };
+
+  // Store the order data in localStorage (you can append it if you want to store multiple orders)
+  let orders = JSON.parse(localStorage.getItem('orders')) || [];
+  orders.push(orderData);
+  localStorage.setItem('orders', JSON.stringify(orders));
+
+  // Clear the cart data after placing the order
+  localStorage.removeItem('cart');
+  displayCartItems();
+
+  // Redirect to the orders page
+  window.location.href = 'orders.html';
 }
 
-returnCartData();
+
+function cleanupEmptyOrders() {
+  let orders = JSON.parse(localStorage.getItem('orders')) || [];
+  
+  // Filter out orders with no items
+  orders = orders.filter(order => order.items.length > 0);
+  
+  // Save the updated orders back to localStorage
+  localStorage.setItem('orders', JSON.stringify(orders));
+}

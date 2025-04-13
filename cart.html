@@ -24,8 +24,11 @@
         Total: <span id="totalPrice">$0.00</span>
       </div>
       <div class="text-end mt-3">
-        <button class="checkoutBtn" id="checkoutBtn" onclick="addOrder()" disabled>Checkout</button>
+        <button class="btn btn-danger" id="clearCartBtn" onclick="clearCart()" disabled>Clear All</button>
+        <a href="orders.html" id="checkoutBtn" class="btn btn-success" onclick="addOrder()">Checkout</a>
+
       </div>
+      
     </div>
   </div>
 

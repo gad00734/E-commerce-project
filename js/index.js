@@ -6,81 +6,164 @@ async function getProducts() {
         const products = await response.json();
         const productList = document.getElementById('product-list');
 
+        // Clean product data function
+        const cleanProductData = (product) => {
+            // Ensure that the product is valid before processing
+            if (!product || !product.title || !product.price || !product.image) {
+                console.error('Invalid product data:', product); // Log invalid product for debugging
+                return {}; // Return an empty object if product is invalid
+            }
+        
+            // Sanitize the title and description
+            const cleanTitle = product.title.replace(/[\n\r\t]/g, ' ').replace(/'/g, ''); // Remove single quotes
+            const cleanDescription = product.description 
+                ? product.description.replace(/[\n\r\t]/g, ' ').replace(/'/g, '') // Clean description
+                : ''; // Use empty string if no description is provided
+        
+            return {
+                ...product,
+                title: cleanTitle,
+                description: cleanDescription
+            };
+        };
+        
+        
+
+        // Loop through products
         products.forEach(product => {
+            const cleanProduct = cleanProductData(product);
+        
+            // Skip rendering if cleanProduct is invalid
+            if (Object.keys(cleanProduct).length === 0) return;  // Skip this product if invalid
+        
             const productCard = document.createElement('div');
             productCard.classList.add('col-lg-3', 'col-md-6', 'mb-4');
             productCard.innerHTML = `
-    <div class="product-card card h-100 shadow-sm border-0">
-        <img src="${product.image}" class="card-img-top" alt="${product.title}">
-        <div class="card-body text-center">
-            <h5 class="card-title fw-bold">${product.title}</h5>
-            <p class="card-text text-muted">$${product.price}</p>
-            <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-primary btn-sm rounded-pill view-details">View Details</button>
-                <a href="#" class="btn btn-primary btn-sm rounded-pill" onclick="addToCart({title: 'Product Name', image: 'image.jpg', price: 29.99})">Add to Cart</a>
-
-            </div>
-        </div>
-    </div>
-`;
-
-// Function to add an item to the cart
-function addToCart(product) {
-    // Get the current cart from localStorage, or create a new array if it's empty
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // Add the new product to the cart
-    cart.push(product);
-
-    // Save the updated cart back to localStorage
-    localStorage.setItem('cart', JSON.stringify(cart));
-
-    // Update the cart icon count
-    updateCartIcon();
-}
-
-// Function to update the cart icon count in the navbar
-function updateCartIcon() {
-    // Get the current cart from localStorage
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
-    // Get the count of items in the cart
-    const cartCount = cart.length;
-
-    // Get the cart count element in the navbar
-    const cartCountElement = document.getElementById('cart-count');
-
-    // Update the text content of the cart count element
-    cartCountElement.textContent = cartCount;
-
-    // If cart is empty, hide the badge (optional)
-    if (cartCount === 0) {
-        cartCountElement.style.display = 'none';
-    } else {
-        cartCountElement.style.display = 'inline';
-    }
-}
-
-// Update the cart icon when the page loads
-updateCartIcon();
-
-
-
-            // Append to list
-            productList.appendChild(productCard);
-
-            // Get the "View Details" button inside the card
-            const viewBtn = productCard.querySelector('.view-details');
-            viewBtn.addEventListener('click', () => {
-                showProductModal(product);
+                <div class="product-card card h-100 shadow-sm border-0">
+                    <img src="${cleanProduct.image}" class="card-img-top" alt="${cleanProduct.title}">
+                    <div class="card-body text-center">
+                        <h5 class="card-title fw-bold">${cleanProduct.title}</h5>
+                        <p class="card-text text-muted">$${cleanProduct.price}</p>
+                        <button class="btn btn-success btn-sm rounded-pill view-details-btn" data-product='${encodeURIComponent(JSON.stringify(cleanProduct))}'>View Details</button>
+                        <button class="btn btn-success btn-sm rounded-pill add-to-cart-btn" data-id="${cleanProduct.id}">Add to Cart</button>
+                        <button class="btn btn-danger btn-sm rounded-pill add-to-wishlist-btn" data-product='${encodeURIComponent(JSON.stringify(cleanProduct))}'>
+                            <i class="bi bi-heart"></i> 
+                        </button>
+                    </div>
+                </div>
+            `;
+        
+            // Event Listeners after productCard is created
+            productCard.querySelector('.view-details-btn').addEventListener('click', () => {
+                showProductModal(cleanProduct);
             });
+        
+            productCard.querySelector('.add-to-cart-btn').addEventListener('click', () => {
+                addToCart(cleanProduct);
+            });
+        
+            // Wishlist button event listener
+            productCard.querySelector('.add-to-wishlist-btn').addEventListener('click', (e) => {
+                const btn = e.currentTarget;
+                const productDataString = decodeURIComponent(btn.dataset.product); // Decode before parsing
+            
+                try {
+                    // Parse the cleaned and decoded string
+                    const productData = JSON.parse(productDataString);
+                    
+                    // Ensure valid product data before adding to wishlist
+                    if (productData && productData.id && productData.title) {
+                        addToWishlist(productData);
+                    } else {
+                        console.error("Invalid product data:", productData);
+                        showToast("Oops! Something went wrong while adding to the wishlist.");
+                    }
+                } catch (error) {
+                    console.error("Error parsing JSON:", error);
+                    showToast("Oops! Something went wrong while adding to the wishlist.");
+                }
+            });
+        
+            // Append product card to DOM
+            productList.appendChild(productCard);
         });
+        
+
     } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error("Error fetching products:", error);
     }
 }
 
-// Show product in modal
+
+// Add product to cart and update localStorage
+function addToCart(product) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  
+    const index = cart.findIndex(item => item.id === product.id);
+  
+    if (index > -1) {
+      cart[index].quantity += 1;
+    } else {
+      cart.push({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1
+      });
+    }
+  
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartCount();
+
+    showToast(`${product.title} added to cart`);
+}
+
+function showToast(message) {
+    const toastElement = document.getElementById('liveToast');
+    const toastMsg = document.getElementById('toast-message');
+    toastMsg.textContent = message;
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
+}
+
+// Update cart counter
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    let totalItems = 0;
+    
+    cart.forEach(item => {
+        totalItems += item.quantity;
+    });
+    
+    document.getElementById('cart-count').textContent = totalItems;
+}
+
+function updateWishlistCount() {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+    const wishlistCountElem = document.getElementById('wishlistCount');
+    if (wishlistCountElem) {
+        wishlistCountElem.textContent = wishlist.length;
+    }
+}
+
+function addToWishlist(product) {
+    let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+    const exists = wishlist.some(item => item && item.id === product.id);
+    if (!exists) {
+        wishlist.push(product);
+        localStorage.setItem('wishlist', JSON.stringify(wishlist));
+        showToast(`${product.title} added to wishlist`);
+        updateWishlistCount();  // Make sure it's updated here
+    } else {
+        showToast(`${product.title} is already in your wishlist`);
+    }
+
+    console.log("Wishlist:", wishlist);
+}
+
+// Show product modal
 function showProductModal(product) {
     document.getElementById('modal-title').textContent = product.title;
     document.getElementById('modal-description').textContent = product.description;
@@ -92,4 +175,9 @@ function showProductModal(product) {
     productModal.show();
 }
 
-getProducts();
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    updateCartCount();
+    updateWishlistCount();
+    getProducts();
+});
