@@ -1,0 +1,19 @@
+{
+  "productsCount": 50,
+  "categoriesCount": 10,
+  "pendingOrdersCount": 5,
+  "recentOrders": [
+    {
+      "id": "001",
+      "customer": "John Doe",
+      "status": "Pending",
+      "total": "$150"
+    },
+    {
+      "id": "002",
+      "customer": "Jane Smith",
+      "status": "Confirmed",
+      "total": "$200"
+    }
+  ]
+}
