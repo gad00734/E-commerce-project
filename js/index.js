@@ -102,24 +102,20 @@ async function getCategories() {
 
         if (!categorySection) return;
 
-        categorySection.innerHTML = ""; // Clear any existing categories
+        categorySection.innerHTML = ""; // Clear existing
 
         categories.forEach(category => {
-            // Sanitize
             const name = category.name.replace(/[\n\r\t]/g, ' ').replace(/'/g, '');
             const image = category.image;
 
             const categoryCard = document.createElement('div');
-            categoryCard.classList.add('col-lg-3', 'col-md-6', 'mb-4');
+            categoryCard.classList.add('col-6', 'col-sm-4', 'col-md-3', 'mb-4', 'text-center');
 
             categoryCard.innerHTML = `
-                <div class="card h-100 text-center border-0 shadow-sm">
-                    <img src="${image}" class="card-img-top" alt="${name}" style="height: 150px; object-fit: cover;">
-                    <div class="card-body">
-                        <h5 class="card-title">${name}</h5>
-                        <button class="btn btn-outline-success btn-sm">View Products</button>
-                    </div>
+                <div class="category-circle mx-auto">
+                    <img src="${image}" alt="${name}" class="img-fluid rounded-circle category-img">
                 </div>
+                <p class="mt-2 fw-semibold">${name}</p>
             `;
 
             categorySection.appendChild(categoryCard);
@@ -129,6 +125,50 @@ async function getCategories() {
         console.error("Error loading categories:", error);
     }
 }
+document.addEventListener("DOMContentLoaded", () => {
+    loadCategoriesToDropdown();
+    // Other functions like getProducts() can go here
+  });
+  
+  async function loadCategoriesToDropdown() {
+    try {
+      const res = await fetch("http://localhost:3000/categories");
+      const categories = await res.json();
+      const dropdown = document.getElementById("categoryFilter");
+  
+      categories.forEach(cat => {
+        const option = document.createElement("option");
+        option.value = cat.name;
+        option.textContent = cat.name;
+        dropdown.appendChild(option);
+      });
+    } catch (err) {
+      console.error("Failed to load categories:", err);
+    }
+  }
+
+  document.getElementById("categoryFilter").addEventListener("change", (e) => {
+    const selectedCategory = e.target.value;
+  
+    // Call your getProducts() or filtering logic here
+    if (selectedCategory === "all") {
+      getProducts(); // Load all
+    } else {
+      getProductsByCategory(selectedCategory);
+    }
+  });
+  
+  // Example filtering function (depends on your product API structure)
+  async function getProductsByCategory(category) {
+    try {
+      const res = await fetch(`http://localhost:3000/products?category=${category}`);
+      const products = await res.json();
+      renderProducts(products); // a function that renders them in productGrid
+    } catch (err) {
+      console.error("Error fetching products by category:", err);
+    }
+  }
+  
 
 
 // Add product to cart and update localStorage

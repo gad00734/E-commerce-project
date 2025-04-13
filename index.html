@@ -44,6 +44,8 @@
         </div>
     </nav>
 
+
+
     <div class="container-fluid">
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
             <!-- Indicators -->
@@ -83,10 +85,27 @@
                     </div>
                 </div>
             </div>
+
+
+        <!-- Filter Section -->
+        <div class="container my-4">
+            <h2 class="hero-title mb-3">Browse Products</h2>
+            <div class="row g-2 mb-4">
+              <div class="col-md-4">
+                <select class="form-select" id="categoryFilter">
+                  <option selected value="all">All Categories</option>
+                </select>        
+              </div>
+              <div class="col-md-8">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search products..." />
+              </div>
+            </div>
+
             <div class="container mt-5">
-                <h2 class="text-center mb-4">Shop by Category</h2>
+                <h2 class="text-center mb-4"></h2>
                 <div class="row justify-content-center" id="category-section"></div>
               </div>
+              
               
               
             <!-- Controls -->
@@ -100,6 +119,8 @@
             </button>
         </div>
     </div>
+
+
     
 
         <!-- Features Section -->
