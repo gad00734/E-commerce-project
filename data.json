@@ -1,12 +1,10 @@
 {
   "categories": [
     {
-      "id": 1,
-      "name": "Electronics",
-      "image": "/img/1744574036639.jpg"
+      "id": 2,
+      "name": "Men's Fashion gad",
+      "image": "/img/1744579751732.png"
     }
   ],
-  "Products": [
-    
-  ]
+  "Products": []
 }

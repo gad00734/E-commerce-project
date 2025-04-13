@@ -94,6 +94,42 @@ async function getProducts() {
     }
 }
 
+async function getCategories() {
+    try {
+        const response = await fetch("http://localhost:3000/categories");
+        const categories = await response.json();
+        const categorySection = document.getElementById("category-section");
+
+        if (!categorySection) return;
+
+        categorySection.innerHTML = ""; // Clear any existing categories
+
+        categories.forEach(category => {
+            // Sanitize
+            const name = category.name.replace(/[\n\r\t]/g, ' ').replace(/'/g, '');
+            const image = category.image;
+
+            const categoryCard = document.createElement('div');
+            categoryCard.classList.add('col-lg-3', 'col-md-6', 'mb-4');
+
+            categoryCard.innerHTML = `
+                <div class="card h-100 text-center border-0 shadow-sm">
+                    <img src="${image}" class="card-img-top" alt="${name}" style="height: 150px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">${name}</h5>
+                        <button class="btn btn-outline-success btn-sm">View Products</button>
+                    </div>
+                </div>
+            `;
+
+            categorySection.appendChild(categoryCard);
+        });
+
+    } catch (error) {
+        console.error("Error loading categories:", error);
+    }
+}
+
 
 // Add product to cart and update localStorage
 function addToCart(product) {
@@ -118,6 +154,8 @@ function addToCart(product) {
 
     showToast(`${product.title} added to cart`);
 }
+
+
 
 function showToast(message) {
     const toastElement = document.getElementById('liveToast');
@@ -180,4 +218,5 @@ document.addEventListener('DOMContentLoaded', () => {
     updateCartCount();
     updateWishlistCount();
     getProducts();
+    getCategories(); // Load categories from backend
 });
