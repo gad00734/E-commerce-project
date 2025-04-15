@@ -105,38 +105,21 @@
 <body>
     <div class="login-wrapper">
         <div class="login-container">
-            <!-- Left Side -->
-            <div class="login-left d-none d-md-block">
-                <div>
-                    
-                    <h1>Welcome Back!</h1>
-                    <p>To stay connected with us, please log in with your personal info.</p>
+            <h3 class="text-center mb-4">Login</h3>
+            <div id="logoutSuccess" class="alert alert-success text-center d-none mt-3"></div>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email" required />
                 </div>
-            </div>
-            <!-- Right Side -->
-            <div class="login-right">
-                <h3 class="text-center mb-4">Welcome</h3>
-                <p class="text-center">Login to your account to continue</p>
-                <form id="loginForm">
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <input type="checkbox" id="rememberMe">
-                            <label for="rememberMe" class="form-label">Remember Me</label>
-                        </div>
-                        <a href="#" class="text-primary">Forgot your password?</a>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Log In</button>
-                </form>
-                <div class="login-footer mt-3">
-                    <p>Don't have an account? <a href="Register.html">Sign up</a></p>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required />
+                </div>
+                <div id="loginError" class="error-message mb-3" style="display: none;"></div>
+                <div class="form-check">
+                    <input type="checkbox" id="rememberMe" class="form-check-input">
+                    <label for="rememberMe" class="form-check-label">Remember Me</label>
                 </div>
             </div>
         </div>
