@@ -10,8 +10,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
-
-
+    <style>
+        .navbar-nav .nav-item {
+            margin-left: 10px;
+        }
+        #nav-user .nav-link {
+            color: #fff;
+            font-weight: 500;
+        }
+        #nav-user .nav-link:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
@@ -22,30 +32,30 @@
             <span class="navbar-toggler-icon"></span>
           </button>
     
-          <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link" href="Login.html">Login</a></li>
-                <li class="nav-item"><a class="nav-link" href="Register.html">Register</a></li>
+          <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="shop.html">Shop</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">About</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
-                <!-- Cart Icon in Navbar -->
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item" id="nav-user"></li>
+                <li class="nav-item" id="nav-login"><a class="nav-link" href="login.html">Login</a></li>
+                <li class="nav-item" id="nav-register"><a class="nav-link" href="register.html">Register</a></li>
+                <li class="nav-item" id="nav-logout"><a class="nav-link" href="#" onclick="handleLogout()">Logout</a></li>
                 <li class="nav-item">
-                    <a class="nav-link" href="cart.html">
-                        <i class="bi bi-cart-fill" id="cart-icon" style="font-size: 1.5rem;"></i>
-                        <span id="cart-count" class="badge bg-danger rounded-pill">0</span>
-                    </a>
+                  <a class="nav-link" href="cart.html">
+                    <i class="bi bi-cart-fill" id="cart-icon" style="font-size: 1.5rem;"></i>
+                    <span id="cart-count" class="badge bg-danger rounded-pill">0</span>
+                  </a>
                 </li>
-                
-
             </ul>
           </div>
         </div>
     </nav>
 
-
-
+    <!-- Hero Carousel -->
     <div class="container-fluid">
         <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
             <!-- Indicators -->
@@ -86,28 +96,6 @@
                 </div>
             </div>
 
-
-        <!-- Filter Section -->
-        <div class="container my-4">
-            <h2 class="hero-title mb-3">Browse Products</h2>
-            <div class="row g-2 mb-4">
-              <div class="col-md-4">
-                <select class="form-select" id="categoryFilter">
-                  <option selected value="all">All Categories</option>
-                </select>        
-              </div>
-              <div class="col-md-8">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search products..." />
-              </div>
-            </div>
-
-            <div class="container mt-5">
-                <h2 class="text-center mb-4"></h2>
-                <div class="row justify-content-center" id="category-section"></div>
-              </div>
-              
-              
-              
             <!-- Controls -->
             <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -120,108 +108,160 @@
         </div>
     </div>
 
+    <!-- Categories Section -->
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Shop by Categories</h2>
+        <div class="row justify-content-center" id="category-section">
+            <!-- Categories will be loaded here dynamically -->
+        </div>
+    </div>
 
-    
+    <!-- Search and Filter Section -->
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Browse Products</h2>
+        <div class="row justify-content-center g-3">
+            <div class="col-md-4">
+                <select class="form-select" id="categoryFilter">
+                    <option selected value="all">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-8">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search products..." />
+            </div>
+        </div>
+    </div>
 
-        <!-- Features Section -->
-        <div class="features py-5">
-            <div class="container">
-                <h2 class="text-center fw-bold mb-4">Why Choose Us?</h2>
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="feature-card p-4 text-center shadow-sm border rounded">
-                            <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                                <i class="bi bi-gem fs-2"></i>
-                            </div>
-                            <h5 class="fw-bold">High Quality</h5>
-                            <p class="text-muted">Our products are made with the best materials to ensure satisfaction.</p>
+    <!-- Products Section -->
+    <div class="container mb-5">
+        <div class="row g-4" id="product-list">
+            <!-- Products will be loaded here dynamically -->
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features py-5">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-4">Why Choose Us?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card p-4 text-center shadow-sm border rounded">
+                        <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-gem fs-2"></i>
                         </div>
+                        <h5 class="fw-bold">High Quality</h5>
+                        <p class="text-muted">Our products are made with the best materials to ensure satisfaction.</p>
                     </div>
-                    <div class="col-md-4">
-                        <div class="feature-card p-4 text-center shadow-sm border rounded">
-                            <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                                <i class="bi bi-truck fs-2"></i>
-                            </div>
-                            <h5 class="fw-bold">Fast Delivery</h5>
-                            <p class="text-muted">Get your items delivered quickly and reliably to your doorstep.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card p-4 text-center shadow-sm border rounded">
+                        <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-truck fs-2"></i>
                         </div>
+                        <h5 class="fw-bold">Fast Delivery</h5>
+                        <p class="text-muted">Get your items delivered quickly and reliably to your doorstep.</p>
                     </div>
-                    <div class="col-md-4">
-                        <div class="feature-card p-4 text-center shadow-sm border rounded">
-                            <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                                <i class="bi bi-headset fs-2"></i>
-                            </div>
-                            <h5 class="fw-bold">Customer Support</h5>
-                            <p class="text-muted">We’re here to help with any questions or concerns, 24/7.</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card p-4 text-center shadow-sm border rounded">
+                        <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="bi bi-headset fs-2"></i>
                         </div>
+                        <h5 class="fw-bold">Customer Support</h5>
+                        <p class="text-muted">We're here to help with any questions or concerns, 24/7.</p>
                     </div>
                 </div>
             </div>
         </div>
-        
-        
-        
-
-        <!-- Product Section -->
-        <h2 class="text-center fw-bold mb-4">Our Products</h2>
-        <div class="products">
-            <div class="container-fluid my-4">
-                <div class="row g-3" id="product-list">
-                    <!-- المنتجات سيتم إضافتها هنا ديناميكيًا -->
-                </div>
-            </div>
-        
-            <!-- Call to Action -->
-            <div class="cta">
-                <h2>Ready to Start Shopping?</h2>
-                <p>Sign up now and enjoy exclusive discounts and offers!</p>
-                <a href="#" class="btn btn-primary">Sign Up</a>
-            </div>
-        </div>
-
-        <!-- Product Details Modal -->
-<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="productModalLabel">Product Details</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <img id="modal-image" src="" class="img-fluid mb-3" alt="Product Image">
-          <h5 id="modal-title"></h5>
-          <p id="modal-description" class="text-muted"></p>
-          <p class="fw-bold">$<span id="modal-price"></span></p>
-          <p class="text-warning">Rating: <span id="modal-rating"></span> ⭐</p>
-        </div>
-      </div>
     </div>
-  </div>
 
-  <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-    <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body" id="toast-message">
-          Product added to cart.
+    <!-- Call to Action -->
+    <section class="cta py-5 bg-light">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-3">Ready to Start Shopping?</h2>
+            <p class="mb-4">Sign up now and enjoy exclusive discounts and offers!</p>
+            <a href="register.html" class="btn btn-primary btn-lg">Sign Up Now</a>
         </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-      </div>
+    </section>
+
+    <!-- Product Details Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="productModalLabel">Product Details</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img id="modal-image" src="" class="img-fluid mb-3" alt="Product Image">
+              <h5 id="modal-title"></h5>
+              <p id="modal-description" class="text-muted"></p>
+              <p class="fw-bold">$<span id="modal-price"></span></p>
+              <p class="text-warning">Rating: <span id="modal-rating"></span> ⭐</p>
+            </div>
+          </div>
+        </div>
     </div>
-  </div>
+
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+        <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body" id="toast-message">
+              Product added to cart.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+    </div>
   
-        
     <!-- Footer -->
     <footer>
         <p>&copy; 2025 My Store. All rights reserved.</p>
     </footer>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/index.js"></script>
 
     <script>
+        function handleLogout() {
+            localStorage.removeItem("loggedInUser");
+            window.location.href = "index.html";
+        }
 
-
+        document.addEventListener("DOMContentLoaded", function() {
+            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  
+            const navLogin = document.getElementById("nav-login");
+            const navRegister = document.getElementById("nav-register");
+            const navLogout = document.getElementById("nav-logout");
+            const navUser = document.getElementById("nav-user");
+  
+            if (loggedInUser) {
+                navLogin.classList.add("d-none");
+                navRegister.classList.add("d-none");
+                navLogout.classList.remove("d-none");
+  
+                if (navUser) {
+                    let displayName = 'User';
+                    if (loggedInUser.name || loggedInUser.username) {
+                        // Use name if available, otherwise use username
+                        const fullName = loggedInUser.name || loggedInUser.username;
+                        // Split the full name and take first two names
+                        const nameParts = fullName.split(' ').filter(part => part.length > 0);
+                        displayName = nameParts.slice(0, 2).join(' ');
+                    }
+                    navUser.innerHTML = `<span class="nav-link">Hello, ${displayName}</span>`;
+                }
+            } else {
+                navLogin.classList.remove("d-none");
+                navRegister.classList.remove("d-none");
+                navLogout.classList.add("d-none");
+  
+                if (navUser) {
+                    navUser.innerHTML = '';
+                }
+            }
+        });
     </script>
 </body>
 </html>

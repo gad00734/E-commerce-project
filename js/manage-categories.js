@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function() {
     const addCategoryForm = document.getElementById("addCategoryForm");
     const categoryList = document.getElementById("categoryList");
-    const categoryCount = document.getElementById("categoryCount");
   
     loadCategories();
   
@@ -23,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
         .then(data => {
             alert("Category added successfully!");
             loadCategories(); 
+            addCategoryForm.reset(); // Clear the form
         })
         .catch(err => alert("Error adding category"));
     });
@@ -33,7 +33,6 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(response => response.json())
             .then(data => {
                 categoryList.innerHTML = ""; 
-                categoryCount.textContent = data.length; // categories count
                 data.forEach(category => {
                     const row = document.createElement("tr");
   
@@ -70,7 +69,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     row.appendChild(actionsCell);
                     categoryList.appendChild(row);
                 });
-            });
+            })
+            .catch(err => console.error("Error loading categories:", err));
     }
   
     function openEditCategoryForm(category) {
@@ -100,7 +100,8 @@ document.addEventListener("DOMContentLoaded", function() {
             alert("Category updated successfully!");
             loadCategories(); 
             const editCategoryModal = bootstrap.Modal.getInstance(document.getElementById('editCategoryModal'));
-            editCategoryModal.hide(); 
+            editCategoryModal.hide();
+            document.getElementById("editCategoryForm").reset(); // Clear the form
         })
         .catch(err => alert("Error updating category"));
     });
@@ -119,5 +120,5 @@ document.addEventListener("DOMContentLoaded", function() {
             .catch(err => alert("Error deleting category"));
         }
     }
-  });
+});
   

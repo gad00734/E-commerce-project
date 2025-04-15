@@ -52,6 +52,20 @@ a:hover {
   color: var(--color-light) !important;
 }
 
+/* Navbar user name and spacing styles */
+.navbar-nav .nav-item {
+  margin-left: 10px;
+}
+
+#nav-user .nav-link {
+  color: var(--color-light) !important;
+  font-weight: 500;
+}
+
+#nav-user .nav-link:hover {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
 .hero {
   color: var(--color-light);
   padding: 12rem 2rem;
@@ -135,12 +149,44 @@ a:hover {
 }
 
 .product-card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.product-card .card-img-top {
+  transition: transform 0.3s;
+  object-fit: cover;
+  height: 200px;
+}
+
+.product-card:hover .card-img-top {
   transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.product-card .card-body {
+  padding: 1.25rem;
+}
+
+.product-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.product-card .card-text {
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.product-card .price {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #28a745;
 }
 
 .card-img-top {
@@ -558,4 +604,136 @@ font-size: 1.25rem;
   margin-right: 0.5em; 
   font-size: 1.25rem; 
   }
+}
+
+/* Admin Dashboard Styles */
+.admin-body {
+  font-family: var(--font-main);
+  background-color: var(--color-light);
+  padding: 40px;
+  display: flex;
+}
+
+.admin-sidebar {
+  width: 250px;
+  background-color: var(--color-primary);
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  padding: 20px;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.admin-sidebar.active {
+  transform: translateX(-250px);
+}
+
+.admin-sidebar h4 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.admin-sidebar .list-group-item {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.admin-sidebar .list-group-item:hover {
+  background-color: var(--color-accent);
+}
+
+.admin-content {
+  flex-grow: 1;
+  margin-left: 250px;
+  padding: 20px;
+}
+
+.users-header {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}
+
+.btn-toggle-role {
+  background-color: var(--color-accent);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+.btn-toggle-role:hover {
+  background-color: #1b4332;
+}
+
+.admin-table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.admin-table thead {
+  background-color: var(--color-secondary);
+  color: var(--color-dark);
+}
+
+/* Mobile View for Admin Dashboard */
+@media (max-width: 768px) {
+  .admin-content {
+    margin-left: 0;
+  }
+
+  .admin-sidebar {
+    transform: translateX(-250px);
+  }
+
+  .admin-sidebar.active {
+    transform: translateX(0);
+  }
+}
+
+/* Search and Filter */
+#searchInput, #categoryFilter {
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+
+#searchInput:focus, #categoryFilter:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Products Section */
+.products {
+  background-color: #f8f9fa;
+}
+
+/* CTA Section */
+.cta {
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+  padding: 4rem 0;
+}
+
+.cta h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.cta .btn-primary {
+  background-color: white;
+  color: #28a745;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  transition: transform 0.2s;
+}
+
+.cta .btn-primary:hover {
+  transform: scale(1.05);
+  background-color: #f8f9fa;
 }
