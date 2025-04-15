@@ -2,30 +2,30 @@
   "products": [
     {
       "id": 1,
-      "name": "Nike T-shirt",
-      "price": 300,
-      "categoryId": "1",
-      "quantity": 1,
-      "description": "nike tshirt",
-      "image": "/img/1744675413819.jpg"
+      "name": "iphone 14",
+      "price": 2000,
+      "categoryId": "2",
+      "quantity": 5,
+      "description": "iphone 14 pm",
+      "image": "/img/1744686133358.jpg"
     },
     {
       "id": 2,
-      "name": "iphone 14",
-      "price": 1500,
-      "categoryId": "2",
-      "quantity": 1,
-      "description": "iphone 14",
-      "image": "/img/1744675817003.jpg"
+      "name": "nike T-shirt",
+      "price": 100,
+      "categoryId": "1",
+      "quantity": 5,
+      "description": "nike T-shirt",
+      "image": "/img/1744686193398.jpg"
     },
     {
       "id": 3,
-      "name": "iphone 15",
-      "price": 2000,
+      "name": "sad",
+      "price": 200,
       "categoryId": "2",
       "quantity": 2,
-      "description": "ip 15",
-      "image": "/img/1744676496288.jpg"
+      "description": "asdasd",
+      "image": "/img/1744691881682.jpg"
     }
   ],
   "categories": [

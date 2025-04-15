@@ -10,6 +10,54 @@ function getUserStorageKey(key) {
     return userId ? `${userId}_${key}` : key;
 }
 
+// Update navbar based on login state
+function updateNavbar() {
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    
+    // Get all navbar elements
+    const loginItem = document.getElementById("nav-login");
+    const registerItem = document.getElementById("nav-register");
+    const logoutItem = document.getElementById("nav-logout");
+    const ordersItem = document.getElementById("nav-orders");
+    const wishlistItem = document.getElementById("nav-wishlist");
+    const profileItem = document.getElementById("nav-profile");
+    const usernameDisplay = document.getElementById("username-display");
+    const cartCount = document.getElementById("cart-count");
+
+    if (loggedInUser) {
+        // Show user-specific items
+        if (loginItem) loginItem.style.display = "none";
+        if (registerItem) registerItem.style.display = "none";
+        if (logoutItem) logoutItem.style.display = "block";
+        if (ordersItem) ordersItem.style.display = "block";
+        if (wishlistItem) wishlistItem.style.display = "block";
+        if (profileItem) profileItem.style.display = "block";
+        
+        // Update username display
+        if (usernameDisplay) {
+            const displayName = loggedInUser.username || loggedInUser.name || 'Guest';
+            const nameParts = displayName.split(' ').filter(part => part.length > 0);
+            usernameDisplay.textContent = nameParts.slice(0, 2).join(' ');
+        }
+        
+        // Update counters
+        updateCartCount();
+        updateWishlistCount();
+    } else {
+        // Show login/register items
+        if (loginItem) loginItem.style.display = "block";
+        if (registerItem) registerItem.style.display = "block";
+        if (logoutItem) logoutItem.style.display = "none";
+        if (ordersItem) ordersItem.style.display = "none";
+        if (wishlistItem) wishlistItem.style.display = "none";
+        if (profileItem) profileItem.style.display = "none";
+        
+        // Reset displays
+        if (usernameDisplay) usernameDisplay.textContent = "Guest";
+        if (cartCount) cartCount.textContent = "0";
+    }
+}
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
     const userId = getCurrentUserId();
@@ -17,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = 'login.html';
         return;
     }
+    updateNavbar();
     displayOrders();
     updateCartCount();
     updateWishlistCount();

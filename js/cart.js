@@ -15,6 +15,72 @@ function isUserLoggedIn() {
     return getCurrentUserId() !== null;
 }
 
+// Update navbar based on login state
+function updateNavbar() {
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    
+    // Get all navbar elements
+    const loginItem = document.getElementById("nav-login");
+    const registerItem = document.getElementById("nav-register");
+    const logoutItem = document.getElementById("nav-logout");
+    const ordersItem = document.getElementById("nav-orders");
+    const wishlistItem = document.getElementById("nav-wishlist");
+    const profileItem = document.getElementById("nav-profile");
+    const usernameDisplay = document.getElementById("username-display");
+    const cartCount = document.getElementById("cart-count");
+
+    if (loggedInUser) {
+        // Show user-specific items
+        if (loginItem) loginItem.style.display = "none";
+        if (registerItem) registerItem.style.display = "none";
+        if (logoutItem) logoutItem.style.display = "block";
+        if (ordersItem) ordersItem.style.display = "block";
+        if (wishlistItem) wishlistItem.style.display = "block";
+        if (profileItem) profileItem.style.display = "block";
+        
+        // Update username display
+        if (usernameDisplay) {
+            const displayName = loggedInUser.username || loggedInUser.name || 'Guest';
+            const nameParts = displayName.split(' ').filter(part => part.length > 0);
+            usernameDisplay.textContent = nameParts.slice(0, 2).join(' ');
+        }
+        
+        // Update counters
+        updateCartCount();
+        updateWishlistCount();
+    } else {
+        // Show login/register items
+        if (loginItem) loginItem.style.display = "block";
+        if (registerItem) registerItem.style.display = "block";
+        if (logoutItem) logoutItem.style.display = "none";
+        if (ordersItem) ordersItem.style.display = "none";
+        if (wishlistItem) wishlistItem.style.display = "none";
+        if (profileItem) profileItem.style.display = "none";
+        
+        // Reset displays
+        if (usernameDisplay) usernameDisplay.textContent = "Guest";
+        if (cartCount) cartCount.textContent = "0";
+    }
+}
+
+// Update cart counter
+function updateCartCount() {
+    const cartKey = getUserStorageKey('cart');
+    const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    // Update both the navbar cart count and the cart page count
+    const cartCount = document.getElementById('cart-count');
+    const cartCountBadge = document.getElementById('cartCount');
+    
+    if (cartCount) {
+        cartCount.textContent = totalItems;
+    }
+    if (cartCountBadge) {
+        cartCountBadge.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+    }
+}
+
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
     if (!isUserLoggedIn()) {
@@ -24,12 +90,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1500);
         return;
     }
+    updateNavbar();
     displayCartItems();
     updateWishlistCount();
 });
 
 // Display cart items from localStorage
-function displayCartItems() {
+async function displayCartItems() {
     if (!isUserLoggedIn()) return;
 
     const cartItemsContainer = document.getElementById('cartItems');
@@ -44,6 +111,40 @@ function displayCartItems() {
     const cartKey = getUserStorageKey('cart');
     let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
     
+    // Try to fetch current stock from server
+    let currentProducts = [];
+    try {
+        const response = await fetch('http://localhost:3000/products');
+        if (response.ok) {
+            currentProducts = await response.json();
+            
+            // Update cart with current stock information
+            cart = cart.filter(item => {
+                const currentProduct = currentProducts.find(p => p.id === item.id);
+                if (!currentProduct) {
+                    console.warn(`${item.name} is no longer available`);
+                    return true; // Keep item in cart but mark as unavailable
+                }
+                if (currentProduct.quantity === 0) {
+                    console.warn(`${item.name} is out of stock`);
+                    item.stock = 0;
+                    return true;
+                }
+                if (item.quantity > currentProduct.quantity) {
+                    item.quantity = currentProduct.quantity;
+                    console.warn(`${item.name} quantity adjusted to ${currentProduct.quantity}`);
+                }
+                item.stock = currentProduct.quantity;
+                return true;
+            });
+        } else {
+            console.warn('Server returned error status');
+        }
+    } catch (error) {
+        console.warn('Could not fetch current stock, using cached data:', error);
+    }
+    
+    // Always proceed with displaying cart items, even if server request failed
     cartItemsContainer.innerHTML = '';
     let subtotal = 0;
     const shipping = 5.00; // Fixed shipping cost
@@ -82,14 +183,16 @@ function displayCartItems() {
                     <div class="card-body">
                         <h5 class="card-title">${item.name}</h5>
                         <p class="card-text text-muted mb-1">Price: $${item.price.toFixed(2)}</p>
-                        <p class="card-text text-muted mb-1">Available in stock: ${item.stock}</p>
+                        <p class="card-text text-muted mb-1">
+                            ${item.stock !== undefined ? `Available in stock: ${item.stock}` : 'Stock information unavailable'}
+                        </p>
                         <div class="d-flex align-items-center gap-2">
                             <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, 'decrease')">
                                 <i class="bi bi-dash"></i>
                             </button>
                             <span class="mx-2">${item.quantity}</span>
                             <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, 'increase')"
-                                    ${item.quantity >= item.stock ? 'disabled' : ''}>
+                                    ${item.stock !== undefined && item.quantity >= item.stock ? 'disabled' : ''}>
                                 <i class="bi bi-plus"></i>
                             </button>
                         </div>
@@ -116,30 +219,51 @@ function displayCartItems() {
     totalPriceElem.textContent = `$${total.toFixed(2)}`;
     checkoutBtn.disabled = false;
     clearCartBtn.disabled = false;
+    
+    // Save any updates back to localStorage
+    localStorage.setItem(cartKey, JSON.stringify(cart));
 }
 
 // Update item quantity
-function updateQuantity(productId, action) {
+async function updateQuantity(productId, action) {
     if (!isUserLoggedIn()) return;
 
-    const cartKey = getUserStorageKey('cart');
-    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-    const item = cart.find(item => item.id === productId);
-    
-    if (item) {
-        if (action === 'increase') {
-            if (item.quantity + 1 > item.stock) {
-                showToast(`Sorry, only ${item.stock} items available in stock!`);
-                return;
-            }
-            item.quantity += 1;
-        } else if (action === 'decrease' && item.quantity > 1) {
-            item.quantity -= 1;
-        }
+    try {
+        // Get current stock from server
+        const response = await fetch('http://localhost:3000/products');
+        const products = await response.json();
+        const currentProduct = products.find(p => p.id === productId);
         
-        localStorage.setItem(cartKey, JSON.stringify(cart));
-        displayCartItems();
-        showToast(`Updated ${item.name} quantity`);
+        if (!currentProduct) {
+            showToast('Product no longer available');
+            return;
+        }
+
+        const cartKey = getUserStorageKey('cart');
+        let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+        const item = cart.find(item => item.id === productId);
+        
+        if (item) {
+            if (action === 'increase') {
+                if (item.quantity + 1 > currentProduct.quantity) {
+                    showToast(`Sorry, only ${currentProduct.quantity} items available in stock!`);
+                    return;
+                }
+                item.quantity += 1;
+            } else if (action === 'decrease' && item.quantity > 1) {
+                item.quantity -= 1;
+            }
+            
+            // Update stock information
+            item.stock = currentProduct.quantity;
+            
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            displayCartItems();
+            showToast(`Updated ${item.name} quantity`);
+        }
+    } catch (error) {
+        console.error('Error updating quantity:', error);
+        showToast('Error updating quantity. Please try again.');
     }
 }
 
@@ -172,7 +296,7 @@ function clearCart() {
 }
 
 // Process checkout and create order
-function addOrder() {
+async function addOrder() {
     if (!isUserLoggedIn()) {
         showToast('Please log in to checkout');
         setTimeout(() => {
@@ -189,39 +313,92 @@ function addOrder() {
         return;
     }
 
-    // Calculate totals
-    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const shipping = 5.00;
-    const total = subtotal + shipping;
+    let canProceed = true;
+    let outOfStockItems = [];
 
-    // Create order data
-    const orderData = {
-        orderID: 'ORD' + Date.now(),
-        userID: getCurrentUserId(),
-        date: new Date().toLocaleDateString(),
-        items: cart,
-        subtotal: subtotal,
-        shipping: shipping,
-        totalPrice: total,
-        status: 'Processing'
-    };
+    try {
+        // Get current stock from server
+        const response = await fetch('http://localhost:3000/products');
+        if (!response.ok) throw new Error('Server response was not ok');
+        const products = await response.json();
 
-    // Save order
-    const ordersKey = getUserStorageKey('orders');
-    let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
-    orders.push(orderData);
-    localStorage.setItem(ordersKey, JSON.stringify(orders));
+        // Check if all items are in stock
+        cart.forEach(cartItem => {
+            const product = products.find(p => p.id === cartItem.id);
+            if (!product || product.quantity < cartItem.quantity) {
+                canProceed = false;
+                outOfStockItems.push(cartItem.name);
+            }
+        });
 
-    // Clear cart
-    localStorage.removeItem(cartKey);
-    
-    // Show success message
-    showToast('Order placed successfully!');
-    
-    // Redirect to orders page after a short delay
-    setTimeout(() => {
+        if (!canProceed) {
+            showToast(`Some items are out of stock: ${outOfStockItems.join(', ')}`);
+            return;
+        }
+
+        // Calculate totals
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shipping = 5.00;
+        const total = subtotal + shipping;
+
+        // Create order data
+        const orderData = {
+            orderID: 'ORD' + Date.now(),
+            userID: getCurrentUserId(),
+            date: new Date().toLocaleDateString(),
+            items: cart,
+            subtotal: subtotal,
+            shipping: shipping,
+            totalPrice: total,
+            status: 'Processing'
+        };
+
+        // Save order
+        const ordersKey = getUserStorageKey('orders');
+        let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+        orders.push(orderData);
+        localStorage.setItem(ordersKey, JSON.stringify(orders));
+
+        // Clear cart
+        localStorage.removeItem(cartKey);
+        
+        // Show success message and redirect
+        showToast('Order placed successfully!');
         window.location.href = 'orders.html';
-    }, 1500);
+
+    } catch (error) {
+        console.warn('Could not connect to server. Proceeding with local data:', error);
+        
+        // Calculate totals using local data
+        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shipping = 5.00;
+        const total = subtotal + shipping;
+
+        // Create order with local data
+        const orderData = {
+            orderID: 'ORD' + Date.now(),
+            userID: getCurrentUserId(),
+            date: new Date().toLocaleDateString(),
+            items: cart,
+            subtotal: subtotal,
+            shipping: shipping,
+            totalPrice: total,
+            status: 'Processing'
+        };
+
+        // Save order locally
+        const ordersKey = getUserStorageKey('orders');
+        let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+        orders.push(orderData);
+        localStorage.setItem(ordersKey, JSON.stringify(orders));
+
+        // Clear cart
+        localStorage.removeItem(cartKey);
+        
+        // Show success message and redirect
+        showToast('Order placed successfully!');
+        window.location.href = 'orders.html';
+    }
 }
 
 // Update wishlist counter
@@ -260,4 +437,10 @@ document.getElementById('searchInput')?.addEventListener('input', (e) => {
             item.style.display = 'none';
         }
     });
+});
+
+// Add event listener for checkout button
+document.getElementById('checkoutBtn')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    addOrder();
 });

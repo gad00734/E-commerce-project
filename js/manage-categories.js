@@ -30,10 +30,35 @@ document.addEventListener("DOMContentLoaded", function() {
     // Load categories
     function loadCategories() {
         fetch("http://localhost:3000/categories")
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Received data:', data);
+                if (!Array.isArray(data)) {
+                    console.error('Data is not an array:', data);
+                    throw new Error('Invalid data format');
+                }
+
                 categoryList.innerHTML = ""; 
+                if (data.length === 0) {
+                    categoryList.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center">No categories found</td>
+                        </tr>`;
+                    return;
+                }
+
                 data.forEach(category => {
+                    if (!category || !category.id || !category.name) {
+                        console.warn('Invalid category data:', category);
+                        return;
+                    }
+
                     const row = document.createElement("tr");
   
                     const idCell = document.createElement("td");
@@ -46,23 +71,26 @@ document.addEventListener("DOMContentLoaded", function() {
   
                     const imageCell = document.createElement("td");
                     const img = document.createElement("img");
-                    img.src = category.image;
+                    img.src = category.image || 'images/placeholder.jpg';
                     img.alt = category.name;
                     img.style.width = "50px";
                     img.style.height = "50px";
+                    img.onerror = function() {
+                        this.src = 'images/placeholder.jpg';
+                    };
                     imageCell.appendChild(img);
                     row.appendChild(imageCell);
   
                     const actionsCell = document.createElement("td");
                     const editBtn = document.createElement("button");
                     editBtn.classList.add("btn", "btn-warning", "me-2");
-                    editBtn.textContent = "Edit";
+                    editBtn.innerHTML = '<i class="bi bi-pencil"></i> Edit';
                     editBtn.onclick = () => openEditCategoryForm(category);
                     actionsCell.appendChild(editBtn);
   
                     const deleteBtn = document.createElement("button");
                     deleteBtn.classList.add("btn", "btn-danger");
-                    deleteBtn.textContent = "Delete";
+                    deleteBtn.innerHTML = '<i class="bi bi-trash"></i> Delete';
                     deleteBtn.onclick = () => deleteCategory(category.id);
                     actionsCell.appendChild(deleteBtn);
   
@@ -70,7 +98,15 @@ document.addEventListener("DOMContentLoaded", function() {
                     categoryList.appendChild(row);
                 });
             })
-            .catch(err => console.error("Error loading categories:", err));
+            .catch(err => {
+                console.error("Error loading categories:", err);
+                categoryList.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            Error loading categories. Please try again later.
+                        </td>
+                    </tr>`;
+            });
     }
   
     function openEditCategoryForm(category) {

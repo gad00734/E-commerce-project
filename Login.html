@@ -4,127 +4,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | E-Commerce</title>
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Login</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
     <style>
-        :root {
-            --color-primary: #2D6A4F;
-            --color-secondary: #95D5B2;
-            --color-accent: #40916C;
-            --color-light: #FFFFFF;
-            --color-dark: #212529;
-            --font-main: 'Poppins', sans-serif;
+        .navbar {
+            background-color: #2E7D32 !important;
+            padding: 0.8rem 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        body {
-            margin: 0;
-            font-family: var(--font-main);
-            background-color: var(--color-light);
-        }
-
-        .login-wrapper {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, var(--color-primary) 50%, var(--color-secondary) 50%);
-        }
-
-        .login-container {
-            display: flex;
-            flex-wrap: wrap;
-            background: var(--color-light);
-            border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            max-width: 900px;
-            width: 100%;
-        }
-
-        .login-left,
-        .login-right {
-            padding: 40px;
-        }
-
-        .login-left {
-            background-color: var(--color-primary);
-            color: var(--color-light);
-            flex: 1;
-            text-align: center;
-        }
-
-        .login-left h1 {
-            font-size: 2rem;
+        .navbar-brand {
+            font-size: 1.5rem;
             font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
         }
-
-        .login-left p {
-            margin-top: 10px;
-            font-size: 1rem;
+        .navbar-brand:hover {
+            background-color: rgba(255,255,255,0.1);
         }
-
-        .login-right {
-            flex: 1.5;
+        .navbar-nav .nav-link {
+            color: white !important;
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            margin: 0 0.2rem;
         }
-
-        .form-control {
-            border-radius: 10px;
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: translateY(-1px);
         }
-
-        .btn-primary {
-            background-color: var(--color-primary);
-            border: none;
-            border-radius: 10px;
-            transition: all 0.3s;
+        #cart-count {
+            position: relative;
+            top: -8px;
+            right: 5px;
+            font-size: 0.75rem;
+            background-color: #f44336;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            border: 2px solid #2E7D32;
         }
-
-        .btn-primary:hover {
-            background-color: var(--color-accent);
+        .bi-cart-fill {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
         }
-
-        .login-footer {
-            text-align: center;
-            margin-top: 20px;
+        .cart-link:hover .bi-cart-fill {
+            transform: scale(1.1);
         }
-
-        .login-footer a {
+        #username-display {
+            font-weight: 500;
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin-right: 1rem;
+        }
+        .cart-link {
             text-decoration: none;
-            color: var(--color-primary);
-            font-weight: 600;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .cart-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 0.5rem;
+            min-width: 200px;
+        }
+        .dropdown-item {
+            border-radius: 8px;
+            padding: 0.7rem 1rem;
+            transition: all 0.3s ease;
+            margin: 0.2rem 0;
+            white-space: nowrap;
+        }
+        .dropdown-item:hover {
+            background-color: rgba(46,125,50,0.1);
+            transform: translateX(5px);
+        }
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+        #user-menu .btn-link {
+            border-radius: 8px;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+        }
+        #user-menu .btn-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            transform: scale(1.1);
+        }
+        #user-menu .btn-link:focus {
+            box-shadow: none;
+            text-decoration: none;
+        }
+        .bi-person-circle {
+            font-size: 1.5rem;
+            vertical-align: middle;
         }
 
-        .login-footer a:hover {
-            text-decoration: underline;
+        /* Login specific styles */
+        .login-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+        .login-title {
+            color: #2E7D32;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .form-control:focus {
+            border-color: #2E7D32;
+            box-shadow: 0 0 0 0.2rem rgba(46,125,50,0.25);
+        }
+        .btn-login {
+            background-color: #2E7D32;
+            border-color: #2E7D32;
+            width: 100%;
+            padding: 0.8rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-login:hover {
+            background-color: #1B5E20;
+            border-color: #1B5E20;
+            transform: translateY(-2px);
+        }
+        .register-link {
+            color: #2E7D32;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .register-link:hover {
+            color: #1B5E20;
         }
     </style>
 </head>
 
 <body>
-    <div class="login-wrapper">
-        <div class="login-container">
-            <h3 class="text-center mb-4">Login</h3>
-            <div id="logoutSuccess" class="alert alert-success text-center d-none mt-3"></div>
-            <form id="loginForm">
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" class="form-control" id="email" required />
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand me-4" href="index.html">Home</a>
+                <a class="nav-link" href="shop.html">Shop</a>
+            </div>
+
+            <div class="d-flex align-items-center ms-auto">
+                <div class="me-4" id="welcome-text">
+                    Hello, <span id="username-display">Guest</span>
                 </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" required />
-                </div>
-                <div id="loginError" class="error-message mb-3" style="display: none;"></div>
-                <div class="form-check">
-                    <input type="checkbox" id="rememberMe" class="form-check-input">
-                    <label for="rememberMe" class="form-check-label">Remember Me</label>
+                <a href="cart.html" class="cart-link">
+                    <i class="bi bi-cart-fill"></i>
+                    <span id="cart-count" class="badge bg-danger rounded-pill">0</span>
+                </a>
+                <div class="dropdown ms-3" id="user-menu">
+                    <button class="btn btn-link text-white dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li id="nav-orders"><a class="dropdown-item" href="orders.html"><i class="bi bi-box-seam me-2"></i>My Orders</a></li>
+                        <li id="nav-wishlist"><a class="dropdown-item" href="wishlist.html"><i class="bi bi-heart me-2"></i>Wishlist</a></li>
+                        <li id="nav-profile"><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
+                        <li id="nav-login"><a class="dropdown-item" href="login.html"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
+                        <li id="nav-register"><a class="dropdown-item" href="register.html"><i class="bi bi-person-plus me-2"></i>Register</a></li>
+                        <li id="nav-logout" style="display: none;"><a class="dropdown-item" href="#" onclick="handleLogout()"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
+    </nav>
+
+    <!-- Login Form -->
+    <div class="container">
+        <div class="login-container">
+            <h2 class="login-title">Welcome Back</h2>
+            <form id="loginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-login">Login</button>
+                <div class="text-center mt-3">
+                    <p>Don't have an account? <a href="register.html" class="register-link">Register here</a></p>
+                </div>
+            </form>
+        </div>
     </div>
-    <script src="./js/login.js"> </script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/index.js"></script>
+    <script>
+        function handleLogout() {
+            localStorage.removeItem("loggedInUser");
+            window.location.href = "index.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+            if (loggedInUser) {
+                window.location.href = "index.html";
+                return;
+            }
+            updateNavbar();
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Here you would typically make an API call to verify credentials
+            // For demo purposes, we'll just store the username
+            const user = {
+                username: username,
+                id: Date.now() // Using timestamp as a simple user ID
+            };
+            localStorage.setItem('loggedInUser', JSON.stringify(user));
+            window.location.href = "index.html";
+        });
+    </script>
 </body>
 
 </html>

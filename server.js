@@ -8,6 +8,16 @@ const app = express();
 const PORT = 3000;
 const dataFilePath = path.join(__dirname, "data.json");
 
+// Check if data.json exists, if not create it with initial structure
+if (!fs.existsSync(dataFilePath)) {
+    const initialData = {
+        "products": [],
+        "categories": []
+    };
+    fs.writeFileSync(dataFilePath, JSON.stringify(initialData, null, 2));
+    console.log('Created new data.json file with initial structure');
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'img/');
@@ -24,6 +34,12 @@ app.use(express.static(path.join(__dirname)));
 app.use(express.static(path.join(__dirname, 'img')));
 app.use(cors());
 
+// Middleware to log all requests
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
 // Serve HTML pages
 app.get('/manage-categories.html', (req, res) => {
     res.sendFile(path.join(__dirname, 'manage-categories.html'));
@@ -37,11 +53,28 @@ app.get('/manage-products.html', (req, res) => {
 
 // GET Categories
 app.get("/categories", (req, res) => {
+    console.log('Reading data file for categories...');
     fs.readFile(dataFilePath, "utf8", (err, data) => {
-        if (err) return res.status(500).json({ error: "Failed to read data" });
-        const fileData = JSON.parse(data);
-        const categories = fileData.categories || [];
-        res.json(categories);
+        if (err) {
+            console.error('Error reading data file:', err);
+            return res.status(500).json({ error: "Failed to read data" });
+        }
+        try {
+            const fileData = JSON.parse(data);
+            console.log('Raw file data:', fileData);
+            
+            if (!fileData || typeof fileData !== 'object') {
+                console.error('Invalid file data structure');
+                return res.status(500).json({ error: "Invalid data structure" });
+            }
+
+            const categories = Array.isArray(fileData.categories) ? fileData.categories : [];
+            console.log('Sending categories:', categories);
+            res.json(categories);
+        } catch (error) {
+            console.error('Error parsing data file:', error);
+            res.status(500).json({ error: "Failed to parse data file" });
+        }
     });
 });
 
@@ -128,12 +161,21 @@ app.delete("/categories/:id", (req, res) => {
 
 // GET Products
 app.get("/products", (req, res) => {
+    console.log('Reading data file for products...');
     fs.readFile(dataFilePath, "utf8", (err, data) => {
-        if (err) return res.status(500).json({ error: "Failed to read data" });
-
-        const fileData = JSON.parse(data);
-        const products = fileData.products || [];
-        res.json(products);
+        if (err) {
+            console.error('Error reading data file:', err);
+            return res.status(500).json({ error: "Failed to read data" });
+        }
+        try {
+            const fileData = JSON.parse(data);
+            console.log('Products data:', fileData.products);
+            const products = fileData.products || [];
+            res.json(products);
+        } catch (error) {
+            console.error('Error parsing data file:', error);
+            res.status(500).json({ error: "Failed to parse data file" });
+        }
     });
 });
 
