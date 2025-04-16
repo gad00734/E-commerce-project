@@ -26,6 +26,15 @@
       "quantity": 2,
       "description": "asdasd",
       "image": "/img/1744691881682.jpg"
+    },
+    {
+      "id": 4,
+      "name": "electronics",
+      "price": 20000,
+      "categoryId": "2",
+      "quantity": 6,
+      "description": "it's technologia",
+      "image": "/img/1744745566152.png"
     }
   ],
   "categories": [

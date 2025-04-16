@@ -32,14 +32,14 @@ document.addEventListener("DOMContentLoaded", () => {
             filterProductsByCategory(selectedCategory);
         });
     }
-});
+  });
   
-async function loadCategoriesToDropdown() {
+  async function loadCategoriesToDropdown() {
     try {
-        const res = await fetch("http://localhost:3000/categories");
-        const categories = await res.json();
-        const dropdown = document.getElementById("categoryFilter");
-
+      const res = await fetch("http://localhost:3000/categories");
+      const categories = await res.json();
+      const dropdown = document.getElementById("categoryFilter");
+  
         // Clear existing options
         dropdown.innerHTML = '';
         
@@ -85,12 +85,12 @@ function loadCachedCategories(categories) {
     dropdown.appendChild(allOption);
 
     // Add cached categories
-    categories.forEach(cat => {
+      categories.forEach(cat => {
         const option = document.createElement("option");
         option.value = cat.id;  // Use category ID as value
         option.textContent = cat.name;
         dropdown.appendChild(option);
-    });
+      });
 }
 
 // Function to filter products by category
@@ -410,5 +410,5 @@ function showToast(message, type = 'success') {
         const bsToast = new bootstrap.Toast(toast);
         bsToast.show();
     }
-}
+  }
   

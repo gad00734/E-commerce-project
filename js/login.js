@@ -1,128 +1,84 @@
-// Ensure default admin exists
-function ensureDefaultAdmin() {
-    if (!localStorage.getItem("users")) {
-        const defaultAdmin = [
-            {
-                email: "admin@test.com",
-                password: "admin123",
-                role: "admin",
-                name: "Admin"
-            }
-        ];
-        localStorage.setItem("users", JSON.stringify(defaultAdmin));
+// Initialize admin user if not exists
+function initializeAdminUser() {
+    const adminUser = {
+        id: 'admin',
+        username: 'admin',
+        email: 'admin@example.com',
+        role: 'admin',
+        password: 'admin123' // Store password for demo purposes
+    };
+    
+    // Check if admin user exists
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    const adminExists = users.some(user => user.role === 'admin');
+    
+    if (!adminExists) {
+        users.push(adminUser);
+        localStorage.setItem('users', JSON.stringify(users));
     }
 }
 
-// Initialize on page load
+// Initialize page
 document.addEventListener('DOMContentLoaded', () => {
-    ensureDefaultAdmin();
-    loadRememberMe();
-    setupLogoutHandler();
+    initializeAdminUser();
+    setupLoginForm();
 });
 
-// Select form and input elements
-const loginForm = document.querySelector('form');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const rememberMeCheckbox = document.getElementById('rememberMe');
-const loginError = document.getElementById('loginError');
-
-// Display Error Message
-function displayError(message) {
-    if (loginError) {
-        loginError.textContent = message;
-        loginError.style.display = 'block';
-        setTimeout(() => {
-            loginError.style.display = 'none';
-        }, 3000);
+// Setup login form
+function setupLoginForm() {
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
     }
 }
 
-// Display Success Message
-function displaySuccess(message) {
-    const successDiv = document.getElementById('logoutSuccess');
-    if (successDiv) {
-        successDiv.textContent = message;
-        successDiv.classList.remove('d-none');
-        setTimeout(() => {
-            successDiv.classList.add('d-none');
-        }, 3000);
-    }
-}
-
-// Save Remember Me Data
-function saveRememberMe(email, rememberMe) {
-    if (rememberMe) {
-        localStorage.setItem('rememberMe', email);
-    } else {
-        localStorage.removeItem('rememberMe');
-    }
-}
-
-// Load Remember Me Data
-function loadRememberMe() {
-    const savedEmail = localStorage.getItem('rememberMe');
-    if (savedEmail && emailInput && rememberMeCheckbox) {
-        emailInput.value = savedEmail;
-        rememberMeCheckbox.checked = true;
-    }
-}
-
-// Setup logout handler
-function setupLogoutHandler() {
-    const logoutBtn = document.getElementById('logout');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.removeItem('loggedInUser');
-            window.location.href = 'login.html';
-            displaySuccess('Logged out successfully!');
-        });
-    }
-}
-
-// Form Submission Event Listener
-if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const email = emailInput.value.trim();
-        const password = passwordInput.value.trim();
-        const rememberMe = rememberMeCheckbox.checked;
-
-        // Retrieve users from localStorage (or default to an empty array)
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-
-        // Check if user exists
-        const user = users.find((user) => user.email === email && user.password === password);
-
-        if (user) {
-            // Save Remember Me preference
-            saveRememberMe(email, rememberMe);
-
-            // Store logged in user information
-            const loggedInUser = {
-                id: user.id || email, // Use email as ID if no ID exists
-                email: user.email,
-                username: user.name || email.split('@')[0], // Use email username if no name
-                role: user.role
-            };
-            localStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
-
-            // Successful Login
-            displaySuccess('Login successful! Redirecting...');
-
-            // Redirect based on the user role
+// Handle login
+function handleLogin(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    // Get users from localStorage
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+    
+    // Check for admin login
+    if (username === 'admin' && password === 'admin123') {
+        const adminUser = users.find(user => user.role === 'admin');
+        if (adminUser) {
+            localStorage.setItem('loggedInUser', JSON.stringify(adminUser));
+            showToast('Admin login successful');
             setTimeout(() => {
-                if (user.role === 'admin') {
-                    window.location.href = 'users.html';  // Redirect to admin page
-                } else {
-                    window.location.href = 'index.html';  // Redirect to customer page
-                }
+                window.location.href = 'admin-panel.html';  // Redirect to admin panel
             }, 1500);
-        } else {
-            // Invalid Credentials
-            displayError('Invalid email or password. Please try again.');
+            return;
         }
-    });
+    }
+    
+    // Regular user login
+    const user = users.find(u => 
+        (u.username === username || u.email === username) && 
+        u.password === password
+    );
+    
+    if (user) {
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        showToast('Login successful');
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
+    } else {
+        showToast('Invalid credentials');
+    }
+}
+
+// Show toast notification
+function showToast(message) {
+    const toastElement = document.getElementById('liveToast');
+    const toastMsg = document.getElementById('toast-message');
+    if (toastMsg && toastElement) {
+        toastMsg.textContent = message;
+        const toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    }
 }

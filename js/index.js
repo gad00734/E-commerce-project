@@ -57,8 +57,8 @@ async function getProducts() {
                             </button>
                             <button class="btn btn-danger btn-sm rounded-pill add-to-wishlist-btn" 
                                     data-product='${encodeURIComponent(JSON.stringify(cleanProduct))}'>
-                                <i class="bi bi-heart"></i>
-                            </button>
+                            <i class="bi bi-heart"></i> 
+                        </button>
                         </div>
                     </div>
                 </div>
@@ -75,8 +75,8 @@ async function getProducts() {
 
             if (inStock) {
                 addToCartBtn.addEventListener('click', () => {
-                    addToCart(cleanProduct);
-                });
+                addToCart(cleanProduct);
+            });
             }
 
             wishlistBtn.addEventListener('click', (e) => {
@@ -343,45 +343,49 @@ function addToWishlist(product) {
 // Update navbar based on login state
 function updateNavbar() {
     const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    const usernameDisplay = document.getElementById("username-display");
+    
+    // Get all navbar elements
     const loginItem = document.getElementById("nav-login");
     const registerItem = document.getElementById("nav-register");
     const logoutItem = document.getElementById("nav-logout");
-    const ordersNav = document.getElementById("nav-orders");
-    const wishlistNav = document.getElementById("nav-wishlist");
-    const profileNav = document.getElementById("nav-profile");
+    const ordersItem = document.getElementById("nav-orders");
+    const wishlistItem = document.getElementById("nav-wishlist");
+    const profileItem = document.getElementById("nav-profile");
+    const usernameDisplay = document.getElementById("username-display");
+    const cartCount = document.getElementById("cart-count");
 
     if (loggedInUser) {
-        let displayName = 'User';
+        // Show user-specific items
+        if (loginItem) loginItem.style.display = "none";
+        if (registerItem) registerItem.style.display = "none";
+        if (logoutItem) logoutItem.style.display = "block";
+        if (ordersItem) ordersItem.style.display = "block";
+        if (wishlistItem) wishlistItem.style.display = "block";
+        if (profileItem) profileItem.style.display = "block";
         
-        // Try to get the name from various possible properties
-        if (loggedInUser.email) {
-            const firstName = loggedInUser.email.split('@')[0];
-            displayName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
-        } else if (loggedInUser.username) {
-            displayName = loggedInUser.username;
-        } else if (loggedInUser.name) {
-            displayName = loggedInUser.name.split(' ')[0];
+        // Update username display
+        if (usernameDisplay) {
+            const displayName = loggedInUser.username || loggedInUser.name || 'Guest';
+            const nameParts = displayName.split(' ').filter(part => part.length > 0);
+            usernameDisplay.textContent = nameParts.slice(0, 2).join(' ');
         }
         
-        usernameDisplay.textContent = displayName;
-        loginItem.style.display = "none";
-        registerItem.style.display = "none";
-        logoutItem.style.display = "block";
-        ordersNav.style.display = "block";
-        wishlistNav.style.display = "block";
-        profileNav.style.display = "block";
+        // Update counters
+        updateCartCount();
+        updateWishlistCount();
     } else {
-        usernameDisplay.textContent = "Guest";
-        loginItem.style.display = "block";
-        registerItem.style.display = "block";
-        logoutItem.style.display = "none";
-        ordersNav.style.display = "none";
-        wishlistNav.style.display = "none";
-        profileNav.style.display = "none";
+        // Show login/register items
+        if (loginItem) loginItem.style.display = "block";
+        if (registerItem) registerItem.style.display = "block";
+        if (logoutItem) logoutItem.style.display = "none";
+        if (ordersItem) ordersItem.style.display = "none";
+        if (wishlistItem) wishlistItem.style.display = "none";
+        if (profileItem) profileItem.style.display = "none";
+        
+        // Reset displays
+        if (usernameDisplay) usernameDisplay.textContent = "Guest";
+        if (cartCount) cartCount.textContent = "0";
     }
-    updateCartCount();
-    updateWishlistCount();
 }
 
 // Update cart counter
@@ -450,9 +454,9 @@ function showToast(message) {
     const toastElement = document.getElementById('liveToast');
     const toastMsg = document.getElementById('toast-message');
     if (toastMsg && toastElement) {
-        toastMsg.textContent = message;
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
+    toastMsg.textContent = message;
+    const toast = new bootstrap.Toast(toastElement);
+    toast.show();
     } else {
         console.log(message); // Fallback if toast elements don't exist
     }

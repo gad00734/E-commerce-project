@@ -72,6 +72,7 @@
                 <th>Category ID</th>
                 <th>Name</th>
                 <th>Image</th>
+                <th>Product Count</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -99,6 +100,9 @@
                 <div class="mb-3">
                   <label for="editCategoryImage" class="form-label">Category Image</label>
                   <input type="file" id="editCategoryImage" class="form-control" accept="image/*" />
+                  <div class="mt-2" id="editCategoryImagePreviewContainer" style="display:none;">
+                    <img id="editCategoryImagePreview" src="" alt="Preview" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                  </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Save Changes</button>
               </form>

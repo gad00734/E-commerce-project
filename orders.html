@@ -122,6 +122,72 @@
       font-size: 1.5rem;
       vertical-align: middle;
     }
+    .order-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .order-header {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px 8px 0 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .order-body {
+      padding: 15px;
+    }
+    .order-footer {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-radius: 0 0 8px 8px;
+      border-top: 1px solid #ddd;
+    }
+    .status-badge {
+      font-size: 0.9rem;
+      padding: 0.5em 0.8em;
+    }
+    .status-badge.bg-pending { background-color: #ffc107; }
+    .status-badge.bg-processing { background-color: #17a2b8; }
+    .status-badge.bg-shipped { background-color: #007bff; }
+    .status-badge.bg-delivered { background-color: #28a745; }
+    .status-badge.bg-cancelled { background-color: #dc3545; }
+    .product-img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .tracking-timeline {
+      position: relative;
+      padding: 20px 0;
+    }
+    .tracking-step {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .step-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #e9ecef;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+    }
+    .step-icon.active {
+      background-color: #28a745;
+      color: white;
+    }
+    .step-content {
+      flex-grow: 1;
+    }
+    .step-date {
+      color: #6c757d;
+      font-size: 0.875rem;
+    }
   </style>
 </head>
 <body>

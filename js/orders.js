@@ -1,7 +1,12 @@
+// Check if user is logged in
+function isUserLoggedIn() {
+    return localStorage.getItem('loggedInUser') !== null;
+}
+
 // Get current user's ID
 function getCurrentUserId() {
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-    return loggedInUser ? loggedInUser.id || loggedInUser.username : null;
+    return loggedInUser ? loggedInUser.id : null;
 }
 
 // Get user-specific storage key
@@ -60,22 +65,29 @@ function updateNavbar() {
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', () => {
-    const userId = getCurrentUserId();
-    if (!userId) {
+    if (!isUserLoggedIn()) {
         window.location.href = 'login.html';
         return;
     }
-    updateNavbar();
     displayOrders();
-    updateCartCount();
-    updateWishlistCount();
-    setupLogoutHandler();
+    updateNavbar();
+    setupEventListeners();
 });
+
+// Setup event listeners
+function setupEventListeners() {
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('loggedInUser');
+        window.location.href = 'login.html';
+    });
+}
 
 // Display orders
 function displayOrders() {
-    const ordersKey = getUserStorageKey('orders');
-    const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+    const userId = getCurrentUserId();
+    if (!userId) return;
+
+    const orders = JSON.parse(localStorage.getItem(`${userId}_orders`)) || [];
     const ordersTableBody = document.getElementById('ordersTableBody');
     const noOrders = document.getElementById('noOrders');
 
@@ -93,25 +105,72 @@ function displayOrders() {
                 <td>${order.orderID}</td>
                 <td>${order.date}</td>
                 <td>${order.items.length} items</td>
-                <td>$${order.totalPrice.toFixed(2)}</td>
+                <td>$${order.totalPrice}</td>
                 <td>
-                    <span class="badge bg-${getStatusBadgeClass(order.status)}">
-                        ${order.status}
+                    <span class="badge status-badge bg-${getStatusBadgeClass(order.status)}">
+                        ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                     </span>
                 </td>
                 <td>
                     <button class="btn btn-sm btn-primary" onclick="showOrderDetails('${order.orderID}')">
-                        View Details
+                        <i class="bi bi-eye"></i> View
                     </button>
                 </td>
             </tr>
         `).join('');
 }
 
-// Show order details in modal
+// Get tracking steps based on order status
+function getTrackingSteps(order) {
+    const steps = [
+        { status: 'pending', icon: 'bi-clock', text: 'Order Placed' },
+        { status: 'processing', icon: 'bi-gear', text: 'Processing' },
+        { status: 'shipped', icon: 'bi-truck', text: 'Shipped' },
+        { status: 'delivered', icon: 'bi-check-circle', text: 'Delivered' }
+    ];
+
+    const currentStatus = order.status.toLowerCase();
+    let hasReachedCurrent = false;
+
+    if (currentStatus === 'cancelled') {
+        return `
+            <div class="tracking-step">
+                <div class="step-icon active">
+                    <i class="bi bi-x-circle"></i>
+                </div>
+                <div class="step-content">
+                    <h6 class="mb-1">Order Cancelled</h6>
+                    <div class="step-date">${order.date}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    return steps.map(step => {
+        if (currentStatus === step.status) hasReachedCurrent = true;
+        const isActive = !hasReachedCurrent || currentStatus === step.status;
+        
+        return `
+            <div class="tracking-step">
+                <div class="step-icon ${isActive ? 'active' : ''}">
+                    <i class="bi ${step.icon}"></i>
+                </div>
+                <div class="step-content">
+                    <h6 class="mb-1">${step.text}</h6>
+                    ${isActive ? `<div class="step-date">${
+                        step.status === 'pending' ? order.date : 
+                        new Date().toLocaleString()
+                    }</div>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Show order details
 function showOrderDetails(orderId) {
-    const ordersKey = getUserStorageKey('orders');
-    const orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+    const userId = getCurrentUserId();
+    const orders = JSON.parse(localStorage.getItem(`${userId}_orders`)) || [];
     const order = orders.find(o => o.orderID === orderId);
 
     if (!order) {
@@ -126,7 +185,9 @@ function showOrderDetails(orderId) {
             <p class="mb-1"><strong>Order ID:</strong> ${order.orderID}</p>
             <p class="mb-1"><strong>Date:</strong> ${order.date}</p>
             <p class="mb-1"><strong>Status:</strong> 
-                <span class="badge bg-${getStatusBadgeClass(order.status)}">${order.status}</span>
+                <span class="badge bg-${getStatusBadgeClass(order.status)}">
+                    ${order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                </span>
             </p>
         </div>
 
@@ -162,20 +223,20 @@ function showOrderDetails(orderId) {
             </div>
         </div>
 
+        <div class="tracking-timeline mb-4">
+            ${getTrackingSteps(order)}
+        </div>
+
         <div class="border-top pt-3">
             <div class="row">
                 <div class="col-md-6 offset-md-6">
                     <p class="d-flex justify-content-between mb-1">
                         <span>Subtotal:</span>
-                        <strong>$${order.subtotal.toFixed(2)}</strong>
-                    </p>
-                    <p class="d-flex justify-content-between mb-1">
-                        <span>Shipping:</span>
-                        <strong>$${order.shipping.toFixed(2)}</strong>
+                        <strong>$${order.totalPrice}</strong>
                     </p>
                     <p class="d-flex justify-content-between mb-0 h5">
                         <span>Total:</span>
-                        <strong>$${order.totalPrice.toFixed(2)}</strong>
+                        <strong>$${order.totalPrice}</strong>
                     </p>
                 </div>
             </div>
@@ -189,10 +250,12 @@ function showOrderDetails(orderId) {
 // Get appropriate badge class for order status
 function getStatusBadgeClass(status) {
     switch (status.toLowerCase()) {
-        case 'processing':
+        case 'pending':
             return 'warning';
-        case 'shipped':
+        case 'processing':
             return 'info';
+        case 'shipped':
+            return 'primary';
         case 'delivered':
             return 'success';
         case 'cancelled':
@@ -202,47 +265,25 @@ function getStatusBadgeClass(status) {
     }
 }
 
-// Update cart counter
+// Update cart count
 function updateCartCount() {
-    const cartKey = getUserStorageKey('cart');
-    const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const cartCount = document.getElementById('cart-count');
-    if (cartCount) {
-        cartCount.textContent = totalItems;
-    }
+    const userId = getCurrentUserId();
+    const cart = JSON.parse(localStorage.getItem(`${userId}_cart`)) || [];
+    document.getElementById('cartCount').textContent = cart.length;
 }
 
-// Update wishlist counter
+// Update wishlist count
 function updateWishlistCount() {
-    const wishlistKey = getUserStorageKey('wishlist');
-    const wishlist = JSON.parse(localStorage.getItem(wishlistKey)) || [];
-    const wishlistCount = document.getElementById('wishlistCount');
-    if (wishlistCount) {
-        wishlistCount.textContent = wishlist.length;
-    }
-}
-
-// Setup logout handler
-function setupLogoutHandler() {
-    const logoutBtn = document.getElementById('logout');
-    if (logoutBtn) {
-        logoutBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            localStorage.removeItem('loggedInUser');
-            window.location.href = 'index.html';
-        });
-    }
+    const userId = getCurrentUserId();
+    const wishlist = JSON.parse(localStorage.getItem(`${userId}_wishlist`)) || [];
+    document.getElementById('wishlistCount').textContent = wishlist.length;
 }
 
 // Show toast notification
 function showToast(message) {
-    const toastElement = document.getElementById('liveToast');
-    const toastMsg = document.getElementById('toast-message');
-    if (toastMsg && toastElement) {
-        toastMsg.textContent = message;
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
-    }
+    const toastEl = document.getElementById('liveToast');
+    const toast = new bootstrap.Toast(toastEl);
+    document.getElementById('toast-message').textContent = message;
+    toast.show();
 }
   

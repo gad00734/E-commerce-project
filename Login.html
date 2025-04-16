@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - E-Commerce</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -12,6 +12,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
     <style>
+        body {
+            background-color: #f8f9fa;
+        }
         .navbar {
             background-color: #2E7D32 !important;
             padding: 0.8rem 1rem;
@@ -120,41 +123,40 @@
         /* Login specific styles */
         .login-container {
             max-width: 400px;
-            margin: 2rem auto;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            background-color: white;
+            margin: 100px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        .login-title {
-            color: #2E7D32;
-            margin-bottom: 1.5rem;
+        .login-header {
             text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header i {
+            font-size: 3rem;
+            color: #2E7D32;
         }
         .form-control:focus {
             border-color: #2E7D32;
-            box-shadow: 0 0 0 0.2rem rgba(46,125,50,0.25);
+            box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
         }
-        .btn-login {
+        .btn-primary {
             background-color: #2E7D32;
             border-color: #2E7D32;
-            width: 100%;
-            padding: 0.8rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
         }
-        .btn-login:hover {
+        .btn-primary:hover {
             background-color: #1B5E20;
             border-color: #1B5E20;
-            transform: translateY(-2px);
         }
-        .register-link {
-            color: #2E7D32;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        .register-link:hover {
-            color: #1B5E20;
+        .admin-note {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -196,57 +198,49 @@
     <!-- Login Form -->
     <div class="container">
         <div class="login-container">
-            <h2 class="login-title">Welcome Back</h2>
+            <div class="login-header">
+                <i class="bi bi-person-circle"></i>
+                <h2 class="mt-3">Login</h2>
+            </div>
+            
             <form id="loginForm">
                 <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
+                    <label for="username" class="form-label">Username or Email</label>
                     <input type="text" class="form-control" id="username" required>
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Password</label>
                     <input type="password" class="form-control" id="password" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-login">Login</button>
-                <div class="text-center mt-3">
-                    <p>Don't have an account? <a href="register.html" class="register-link">Register here</a></p>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe">
+                    <label class="form-check-label" for="rememberMe">Remember me</label>
                 </div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
             </form>
+            
+            <div class="text-center mt-3">
+                <p>Don't have an account? <a href="register.html">Register</a></p>
+            </div>
+            
+            
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert">
+            <div class="toast-header">
+                <strong class="me-auto">Notification</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body" id="toast-message"></div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/index.js"></script>
-    <script>
-        function handleLogout() {
-            localStorage.removeItem("loggedInUser");
-            window.location.href = "index.html";
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-            if (loggedInUser) {
-                window.location.href = "index.html";
-                return;
-            }
-            updateNavbar();
-        });
-
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-
-            // Here you would typically make an API call to verify credentials
-            // For demo purposes, we'll just store the username
-            const user = {
-                username: username,
-                id: Date.now() // Using timestamp as a simple user ID
-            };
-            localStorage.setItem('loggedInUser', JSON.stringify(user));
-            window.location.href = "index.html";
-        });
-    </script>
+    <script src="js/login.js"></script>
 </body>
 
 </html>

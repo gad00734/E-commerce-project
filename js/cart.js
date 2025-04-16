@@ -295,8 +295,8 @@ function clearCart() {
     }
 }
 
-// Process checkout and create order
-async function addOrder() {
+// Dummy checkout simulation
+function addOrder() {
     if (!isUserLoggedIn()) {
         showToast('Please log in to checkout');
         setTimeout(() => {
@@ -305,100 +305,46 @@ async function addOrder() {
         return;
     }
 
+    // Get the cart data using user-specific key
     const cartKey = getUserStorageKey('cart');
     const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
-    if (cart.length === 0) {
+    if (!cart || cart.length === 0) {
         showToast('Your cart is empty');
         return;
     }
 
-    let canProceed = true;
-    let outOfStockItems = [];
+    // Calculate subtotal and shipping
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shipping = 5.00; // Fixed shipping cost
+    const totalPrice = (subtotal + shipping).toFixed(2);
 
-    try {
-        // Get current stock from server
-        const response = await fetch('http://localhost:3000/products');
-        if (!response.ok) throw new Error('Server response was not ok');
-        const products = await response.json();
+    // Generate a dummy order ID
+    const orderID = '#100' + Math.floor(Math.random() * 1000);
 
-        // Check if all items are in stock
-        cart.forEach(cartItem => {
-            const product = products.find(p => p.id === cartItem.id);
-            if (!product || product.quantity < cartItem.quantity) {
-                canProceed = false;
-                outOfStockItems.push(cartItem.name);
-            }
-        });
+    // Create order data
+    const orderData = {
+        orderID: orderID,
+        date: new Date().toLocaleDateString(),
+        items: cart,
+        subtotal: subtotal.toFixed(2),
+        shipping: shipping.toFixed(2),
+        totalPrice: totalPrice,
+        status: 'Pending'
+    };
 
-        if (!canProceed) {
-            showToast(`Some items are out of stock: ${outOfStockItems.join(', ')}`);
-            return;
-        }
+    // Store the order data in localStorage using user-specific key
+    const ordersKey = getUserStorageKey('orders');
+    let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
+    orders.push(orderData);
+    localStorage.setItem(ordersKey, JSON.stringify(orders));
 
-        // Calculate totals
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const shipping = 5.00;
-        const total = subtotal + shipping;
+    // Clear the cart data after placing the order
+    localStorage.removeItem(cartKey);
+    displayCartItems();
 
-        // Create order data
-        const orderData = {
-            orderID: 'ORD' + Date.now(),
-            userID: getCurrentUserId(),
-            date: new Date().toLocaleDateString(),
-            items: cart,
-            subtotal: subtotal,
-            shipping: shipping,
-            totalPrice: total,
-            status: 'Processing'
-        };
-
-        // Save order
-        const ordersKey = getUserStorageKey('orders');
-        let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
-        orders.push(orderData);
-        localStorage.setItem(ordersKey, JSON.stringify(orders));
-
-        // Clear cart
-        localStorage.removeItem(cartKey);
-        
-        // Show success message and redirect
-        showToast('Order placed successfully!');
-        window.location.href = 'orders.html';
-
-    } catch (error) {
-        console.warn('Could not connect to server. Proceeding with local data:', error);
-        
-        // Calculate totals using local data
-        const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        const shipping = 5.00;
-        const total = subtotal + shipping;
-
-        // Create order with local data
-        const orderData = {
-            orderID: 'ORD' + Date.now(),
-            userID: getCurrentUserId(),
-            date: new Date().toLocaleDateString(),
-            items: cart,
-            subtotal: subtotal,
-            shipping: shipping,
-            totalPrice: total,
-            status: 'Processing'
-        };
-
-        // Save order locally
-        const ordersKey = getUserStorageKey('orders');
-        let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
-        orders.push(orderData);
-        localStorage.setItem(ordersKey, JSON.stringify(orders));
-
-        // Clear cart
-        localStorage.removeItem(cartKey);
-        
-        // Show success message and redirect
-        showToast('Order placed successfully!');
-        window.location.href = 'orders.html';
-    }
+    // Redirect to the orders page
+    window.location.href = 'orders.html';
 }
 
 // Update wishlist counter
