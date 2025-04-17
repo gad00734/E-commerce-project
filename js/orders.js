@@ -1,3 +1,20 @@
+// Configuration object
+const config = {
+    storageKeys: {
+        products: 'products',
+        categories: 'categories',
+        cart: 'cart',
+        wishlist: 'wishlist',
+        orders: 'orders'
+    },
+    urls: {
+        login: 'login.html',
+        shop: 'shop.html',
+        cart: 'cart.html',
+        orders: 'orders.html'
+    }
+};
+
 // Check if user is logged in
 function isUserLoggedIn() {
     return localStorage.getItem('loggedInUser') !== null;
@@ -6,7 +23,7 @@ function isUserLoggedIn() {
 // Get current user's ID
 function getCurrentUserId() {
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-    return loggedInUser ? loggedInUser.id : null;
+    return loggedInUser ? loggedInUser.id || loggedInUser.username : null;
 }
 
 // Get user-specific storage key
@@ -76,10 +93,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Setup event listeners
 function setupEventListeners() {
-    document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('loggedInUser');
-        window.location.href = 'login.html';
-    });
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
+        });
+    }
 }
 
 // Display orders
@@ -265,18 +285,48 @@ function getStatusBadgeClass(status) {
     }
 }
 
-// Update cart count
+// Update cart counter
 function updateCartCount() {
-    const userId = getCurrentUserId();
-    const cart = JSON.parse(localStorage.getItem(`${userId}_cart`)) || [];
-    document.getElementById('cartCount').textContent = cart.length;
+    if (!isUserLoggedIn()) return;
+    
+    const cartKey = getUserStorageKey(config.storageKeys.cart);
+    const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+    const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
+    
+    // Update all possible cart count elements
+    const cartCountElements = [
+        document.getElementById('cart-count'),
+        document.getElementById('cartCount'),
+        document.getElementById('cartBadgeCount')
+    ];
+    
+    cartCountElements.forEach(element => {
+        if (element) {
+            if (element.id === 'cartCount') {
+                element.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+            } else {
+                element.textContent = totalItems.toString();
+            }
+        }
+    });
+
+    // Update the cart badge in the navbar if it exists
+    const navCartBadge = document.querySelector('.cart-badge');
+    if (navCartBadge) {
+        navCartBadge.textContent = totalItems.toString();
+    }
 }
 
-// Update wishlist count
+// Update wishlist counter
 function updateWishlistCount() {
-    const userId = getCurrentUserId();
-    const wishlist = JSON.parse(localStorage.getItem(`${userId}_wishlist`)) || [];
-    document.getElementById('wishlistCount').textContent = wishlist.length;
+    if (!isUserLoggedIn()) return;
+    
+    const wishlistKey = getUserStorageKey(config.storageKeys.wishlist);
+    const wishlist = JSON.parse(localStorage.getItem(wishlistKey)) || [];
+    const wishlistCount = document.getElementById('wishlistCount');
+    if (wishlistCount) {
+        wishlistCount.textContent = wishlist.length.toString();
+    }
 }
 
 // Show toast notification

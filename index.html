@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Store</title>
-    <!-- Bootstrap CSS -->
+    <title>E-Commerce Store</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         .navbar {
             background-color: #2E7D32 !important;
@@ -118,246 +115,168 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
         <div class="container">
-            <div class="d-flex align-items-center">
-                <a class="navbar-brand me-4" href="index.html">Home</a>
-                <a class="nav-link" href="shop.html">Shop</a>
-            </div>
-
-            <div class="d-flex align-items-center ms-auto">
-                <div class="me-4" id="welcome-text">
-                    Hello, <span id="username-display">Guest</span>
-                </div>
-                <a href="cart.html" class="cart-link">
-                    <i class="bi bi-cart-fill"></i>
-                    <span id="cart-count" class="badge bg-danger rounded-pill">5</span>
-                </a>
-                <div class="dropdown ms-3" id="user-menu">
-                    <button class="btn btn-link text-white dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="bi bi-person-circle"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li id="nav-orders"><a class="dropdown-item" href="orders.html"><i class="bi bi-box-seam me-2"></i>My Orders</a></li>
-                        <li id="nav-wishlist"><a class="dropdown-item" href="wishlist.html"><i class="bi bi-heart me-2"></i>Wishlist</a></li>
-                        <li id="nav-profile"><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>Profile</a></li>
-                        <li id="nav-login"><a class="dropdown-item" href="login.html"><i class="bi bi-box-arrow-in-right me-2"></i>Login</a></li>
-                        <li id="nav-register"><a class="dropdown-item" href="register.html"><i class="bi bi-person-plus me-2"></i>Register</a></li>
-                        <li id="nav-logout" style="display: none;"><a class="dropdown-item" href="#" onclick="handleLogout()"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
-                    </ul>
-                </div>
+            <a class="navbar-brand" href="index.html">E-Commerce Store</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="shop.html">Shop</a>
+                    </li>
+                    <li class="nav-item" id="nav-orders" style="display: none;">
+                        <a class="nav-link" href="orders.html">Orders</a>
+                    </li>
+                    <li class="nav-item" id="nav-wishlist" style="display: none;">
+                        <a class="nav-link" href="Wishlist.html">Wishlist</a>
+                    </li>
+                    <li class="nav-item" id="nav-admin" style="display: none;">
+                        <a class="nav-link" href="admin-panel.html">Admin Panel</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">
+                            <i class="bi bi-cart3"></i> Cart
+                            <span id="cart-count" class="badge bg-danger">0</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="nav-profile" style="display: none;">
+                        <a class="nav-link" href="profile.html">
+                            <i class="bi bi-person-circle"></i>
+                            <span id="username-display">User</span>
+                        </a>
+                    </li>
+                    <li class="nav-item" id="nav-login">
+                        <a class="nav-link" href="Login.html">Login</a>
+                    </li>
+                    <li class="nav-item" id="nav-register">
+                        <a class="nav-link" href="Register.html">Register</a>
+                    </li>
+                    <li class="nav-item" id="nav-logout" style="display: none;">
+                        <a class="nav-link" href="#" onclick="logout()">Logout</a>
+                    </li>
+                </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Carousel -->
-    <div class="container-fluid">
-        <div id="heroCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
-            <!-- Indicators -->
-            <div class="carousel-indicators">
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    <!-- Hero Section -->
+    <div class="hero-section bg-light py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-4 fw-bold">Welcome to Our Store</h1>
+                    <p class="lead">Discover amazing products at great prices.</p>
+                    <a href="shop.html" class="btn btn-success btn-lg">Shop Now</a>
+                </div>
+                <!-- <div class="col-md-6">
+                    <img src="images/hero-image.jpg" alt="Store Banner" class="img-fluid rounded shadow">
+                </div> -->
             </div>
-    
-            <!-- Slides -->
-            <div class="carousel-inner">
-                <div class="carousel-item active">
-                    <div class="hero" style="background: url('img/bg.jpg') no-repeat center center/cover;">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h1 class="text-light">Welcome to Our Store</h1>
-                            <p>Discover the latest products and exclusive deals. Shop with confidence!</p>
-                            <a href="#" class="btn btn-primary">Explore Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="hero" style="background: url('img/bg2.jpg') no-repeat center center/cover;">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h1 class="text-light">Exclusive Deals</h1>
-                            <p>Unbeatable prices and premium quality.</p>
-                            <a href="#" class="btn btn-primary">Shop Now</a>
-                        </div>
-                    </div>
-                </div>
-                <div class="carousel-item">
-                    <div class="hero" style="background: url('img/hed.jpg') no-repeat center center/cover;">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h1 class="text-light">Best Products</h1>
-                            <p>Quality you can trust, delivered to your doorstep.</p>
-                            <a href="#" class="btn btn-primary">View Products</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Controls -->
-            <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
     </div>
 
     <!-- Categories Section -->
-    <div class="container mt-5">
-        <h2 class="text-center mb-4">Shop by Categories</h2>
-        <div class="row justify-content-center" id="category-section">
-            <!-- Categories will be loaded here dynamically -->
-        </div>
-    </div>
-
-    <!-- Search and Filter Section -->
-    <div class="container my-5">
-        <h2 class="text-center mb-4">Browse Products</h2>
-        <div class="row justify-content-center g-3">
-            <div class="col-md-4">
-                <select class="form-select" id="categoryFilter">
-                    <option selected value="all">All Categories</option>
-                </select>
-            </div>
-            <div class="col-md-8">
-                <input type="text" id="searchInput" class="form-control" placeholder="Search products..." />
-            </div>
-        </div>
-    </div>
-
-    <!-- Products Section -->
-    <div class="container mb-5">
-        <div class="row g-4" id="product-list">
-            <!-- Products will be loaded here dynamically -->
-        </div>
-    </div>
-
-    <!-- Features Section -->
-    <div class="features py-5">
+    <section class="py-5">
         <div class="container">
-            <h2 class="text-center fw-bold mb-4">Why Choose Us?</h2>
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-card p-4 text-center shadow-sm border rounded">
-                        <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-gem fs-2"></i>
-                        </div>
-                        <h5 class="fw-bold">High Quality</h5>
-                        <p class="text-muted">Our products are made with the best materials to ensure satisfaction.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 text-center shadow-sm border rounded">
-                        <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-truck fs-2"></i>
-                        </div>
-                        <h5 class="fw-bold">Fast Delivery</h5>
-                        <p class="text-muted">Get your items delivered quickly and reliably to your doorstep.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4 text-center shadow-sm border rounded">
-                        <div class="icon-container bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
-                            <i class="bi bi-headset fs-2"></i>
-                        </div>
-                        <h5 class="fw-bold">Customer Support</h5>
-                        <p class="text-muted">We're here to help with any questions or concerns, 24/7.</p>
-                    </div>
-                </div>
+            <h2 class="text-center mb-4">Shop by Category</h2>
+            <div class="row" id="category-section">
+                <!-- Categories will be loaded here -->
             </div>
-        </div>
-    </div>
-
-    <!-- Call to Action -->
-    <section class="cta py-5 bg-light">
-        <div class="container text-center">
-            <h2 class="fw-bold mb-3">Ready to Start Shopping?</h2>
-            <p class="mb-4">Sign up now and enjoy exclusive discounts and offers!</p>
-            <a href="register.html" class="btn btn-primary btn-lg">Sign Up Now</a>
         </div>
     </section>
 
-    <!-- Product Details Modal -->
-    <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="productModalLabel">Product Details</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <!-- Featured Products Section -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-4">Featured Products</h2>
+            
+            <!-- Filters -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <select class="form-select" id="categoryFilter">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search products...">
+                </div>
             </div>
-            <div class="modal-body">
-              <img id="modal-image" src="" class="img-fluid mb-3" alt="Product Image">
-              <h5 id="modal-title"></h5>
-              <p id="modal-description" class="text-muted"></p>
-              <p class="fw-bold">$<span id="modal-price"></span></p>
-              <p class="text-warning">Rating: <span id="modal-rating"></span> ⭐</p>
+
+            <!-- Products Grid -->
+            <div class="row" id="product-list">
+                <!-- Products will be loaded here -->
             </div>
-          </div>
+        </div>
+    </section>
+
+    <!-- Product Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <img id="modal-image" src="" alt="Product" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="mb-3">Price: $<span id="modal-price"></span></h4>
+                            <p class="mb-3" id="modal-stock"></p>
+                            <p class="mb-3" id="modal-description"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
-        <div id="liveToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-          <div class="d-flex">
-            <div class="toast-body" id="toast-message">
-              Product added to cart.
-            </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-          </div>
-        </div>
-    </div>
-  
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 My Store. All rights reserved.</p>
+    <footer class="bg-dark text-light py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>About Us</h5>
+                    <p>Your trusted source for quality products.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="shop.html" class="text-light">Shop</a></li>
+                        <li><a href="#" class="text-light">About</a></li>
+                        <li><a href="#" class="text-light">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contact Us</h5>
+                    <p>Email: medogadalrb@gmail.com<br>Phone: 01030271734</p>
+                </div>
+            </div>
+            
+        </div>
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/config.js"></script>
     <script src="js/index.js"></script>
 
     <script>
-        function handleLogout() {
-            localStorage.removeItem("loggedInUser");
-            window.location.href = "index.html";
+        // Logout function
+        function logout() {
+            localStorage.removeItem(config.storageKeys.user);
+            window.location.href = config.urls.home;
         }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-  
-            const navLogin = document.getElementById("nav-login");
-            const navRegister = document.getElementById("nav-register");
-            const navLogout = document.getElementById("nav-logout");
-            const navUser = document.getElementById("nav-user");
-  
-            if (loggedInUser) {
-                navLogin.classList.add("d-none");
-                navRegister.classList.add("d-none");
-                navLogout.classList.remove("d-none");
-  
-                if (navUser) {
-                    let displayName = 'User';
-                    if (loggedInUser.name || loggedInUser.username) {
-                        // Use name if available, otherwise use username
-                        const fullName = loggedInUser.name || loggedInUser.username;
-                        // Split the full name and take first two names
-                        const nameParts = fullName.split(' ').filter(part => part.length > 0);
-                        displayName = nameParts.slice(0, 2).join(' ');
-                    }
-                    navUser.innerHTML = `<span class="nav-link">Hello, ${displayName}</span>`;
-                }
-            } else {
-                navLogin.classList.remove("d-none");
-                navRegister.classList.remove("d-none");
-                navLogout.classList.add("d-none");
-  
-                if (navUser) {
-                    navUser.innerHTML = '';
-                }
-            }
-        });
     </script>
 </body>
 </html>

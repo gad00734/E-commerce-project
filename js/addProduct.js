@@ -66,7 +66,8 @@ document.getElementById("addProductForm").addEventListener("submit", function (e
         const products = JSON.parse(localStorage.getItem("products")) || [];
 
         // Add new product
-        products.push(product);
+       if(price>0&&name!=""&&quantity>0){
+        products.push(product);}
 
         // Save back to localStorage
         localStorage.setItem("products", JSON.stringify(products));

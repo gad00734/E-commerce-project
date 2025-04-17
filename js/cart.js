@@ -1,3 +1,20 @@
+// Configuration object
+const config = {
+    storageKeys: {
+        products: 'products',
+        categories: 'categories',
+        cart: 'cart',
+        wishlist: 'wishlist',
+        orders: 'orders'
+    },
+    urls: {
+        login: 'login.html',
+        shop: 'shop.html',
+        cart: 'cart.html',
+        orders: 'orders.html'
+    }
+};
+
 // Get current user's ID
 function getCurrentUserId() {
     const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -65,19 +82,33 @@ function updateNavbar() {
 
 // Update cart counter
 function updateCartCount() {
-    const cartKey = getUserStorageKey('cart');
+    if (!isUserLoggedIn()) return;
+    
+    const cartKey = getUserStorageKey(config.storageKeys.cart);
     const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const totalItems = cart.reduce((sum, item) => sum + (parseInt(item.quantity) || 0), 0);
     
-    // Update both the navbar cart count and the cart page count
-    const cartCount = document.getElementById('cart-count');
-    const cartCountBadge = document.getElementById('cartCount');
+    // Update all possible cart count elements
+    const cartCountElements = [
+        document.getElementById('cart-count'),
+        document.getElementById('cartCount'),
+        document.getElementById('cartBadgeCount')
+    ];
     
-    if (cartCount) {
-        cartCount.textContent = totalItems;
-    }
-    if (cartCountBadge) {
-        cartCountBadge.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+    cartCountElements.forEach(element => {
+        if (element) {
+            if (element.id === 'cartCount') {
+                element.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
+            } else {
+                element.textContent = totalItems.toString();
+            }
+        }
+    });
+
+    // Update the cart badge in the navbar if it exists
+    const navCartBadge = document.querySelector('.cart-badge');
+    if (navCartBadge) {
+        navCartBadge.textContent = totalItems.toString();
     }
 }
 
@@ -95,191 +126,186 @@ document.addEventListener('DOMContentLoaded', () => {
     updateWishlistCount();
 });
 
-// Display cart items from localStorage
-async function displayCartItems() {
-    if (!isUserLoggedIn()) return;
-
-    const cartItemsContainer = document.getElementById('cartItems');
-    const totalPriceElem = document.getElementById('totalPrice');
-    const subtotalElem = document.getElementById('subtotal');
-    const shippingElem = document.getElementById('shipping');
-    const totalItemsElem = document.getElementById('totalItems');
-    const cartCountElem = document.getElementById('cartCount');
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    const clearCartBtn = document.getElementById('clearCartBtn');
-    
-    const cartKey = getUserStorageKey('cart');
-    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-    
-    // Try to fetch current stock from server
-    let currentProducts = [];
+// Function to display cart items
+function displayCartItems() {
     try {
-        const response = await fetch('http://localhost:3000/products');
-        if (response.ok) {
-            currentProducts = await response.json();
-            
-            // Update cart with current stock information
-            cart = cart.filter(item => {
-                const currentProduct = currentProducts.find(p => p.id === item.id);
-                if (!currentProduct) {
-                    console.warn(`${item.name} is no longer available`);
-                    return true; // Keep item in cart but mark as unavailable
-                }
-                if (currentProduct.quantity === 0) {
-                    console.warn(`${item.name} is out of stock`);
-                    item.stock = 0;
-                    return true;
-                }
-                if (item.quantity > currentProduct.quantity) {
-                    item.quantity = currentProduct.quantity;
-                    console.warn(`${item.name} quantity adjusted to ${currentProduct.quantity}`);
-                }
-                item.stock = currentProduct.quantity;
-                return true;
-            });
-        } else {
-            console.warn('Server returned error status');
-        }
-    } catch (error) {
-        console.warn('Could not fetch current stock, using cached data:', error);
-    }
-    
-    // Always proceed with displaying cart items, even if server request failed
-    cartItemsContainer.innerHTML = '';
-    let subtotal = 0;
-    const shipping = 5.00; // Fixed shipping cost
-    
-    if (cart.length === 0) {
-        cartItemsContainer.innerHTML = `
-            <div class="text-center py-5">
-                <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
-                <p class="text-muted mt-3">Your cart is empty</p>
-                <a href="index.html" class="btn btn-primary mt-2">Continue Shopping</a>
-            </div>
-        `;
-        totalItemsElem.textContent = '0';
-        cartCountElem.textContent = '0 items';
-        subtotalElem.textContent = '$0.00';
-        shippingElem.textContent = '$0.00';
-        totalPriceElem.textContent = '$0.00';
-        checkoutBtn.disabled = true;
-        clearCartBtn.disabled = true;
-        return;
-    }
-
-    cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
-        subtotal += itemTotal;
-
-        const cartItem = document.createElement('div');
-        cartItem.classList.add('card', 'mb-3');
-        cartItem.innerHTML = `
-            <div class="row g-0 align-items-center p-2">
-                <div class="col-md-2">
-                    <img src="${item.image}" class="img-fluid rounded" alt="${item.name}"
-                         onerror="this.src='images/placeholder.jpg'">
-                </div>
-                <div class="col-md-7">
-                    <div class="card-body">
-                        <h5 class="card-title">${item.name}</h5>
-                        <p class="card-text text-muted mb-1">Price: $${item.price.toFixed(2)}</p>
-                        <p class="card-text text-muted mb-1">
-                            ${item.stock !== undefined ? `Available in stock: ${item.stock}` : 'Stock information unavailable'}
-                        </p>
-                        <div class="d-flex align-items-center gap-2">
-                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, 'decrease')">
-                                <i class="bi bi-dash"></i>
-                            </button>
-                            <span class="mx-2">${item.quantity}</span>
-                            <button class="btn btn-sm btn-outline-secondary" onclick="updateQuantity(${item.id}, 'increase')"
-                                    ${item.stock !== undefined && item.quantity >= item.stock ? 'disabled' : ''}>
-                                <i class="bi bi-plus"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3 text-end">
-                    <p class="h5 text-success mb-3">$${itemTotal.toFixed(2)}</p>
-                    <button class="btn btn-sm btn-outline-danger" onclick="removeFromCart(${item.id})">
-                        <i class="bi bi-trash"></i> Remove
-                    </button>
-                </div>
-            </div>
-        `;
-        cartItemsContainer.appendChild(cartItem);
-    });
-
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const total = subtotal + shipping;
-
-    totalItemsElem.textContent = totalItems;
-    cartCountElem.textContent = `${totalItems} item${totalItems !== 1 ? 's' : ''}`;
-    subtotalElem.textContent = `$${subtotal.toFixed(2)}`;
-    shippingElem.textContent = `$${shipping.toFixed(2)}`;
-    totalPriceElem.textContent = `$${total.toFixed(2)}`;
-    checkoutBtn.disabled = false;
-    clearCartBtn.disabled = false;
-    
-    // Save any updates back to localStorage
-    localStorage.setItem(cartKey, JSON.stringify(cart));
-}
-
-// Update item quantity
-async function updateQuantity(productId, action) {
-    if (!isUserLoggedIn()) return;
-
-    try {
-        // Get current stock from server
-        const response = await fetch('http://localhost:3000/products');
-        const products = await response.json();
-        const currentProduct = products.find(p => p.id === productId);
-        
-        if (!currentProduct) {
-            showToast('Product no longer available');
+        if (!isUserLoggedIn()) {
+            showToast('Please log in to view your cart', 'warning');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1500);
             return;
         }
 
         const cartKey = getUserStorageKey('cart');
-        let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-        const item = cart.find(item => item.id === productId);
-        
-        if (item) {
-            if (action === 'increase') {
-                if (item.quantity + 1 > currentProduct.quantity) {
-                    showToast(`Sorry, only ${currentProduct.quantity} items available in stock!`);
-                    return;
-                }
-                item.quantity += 1;
-            } else if (action === 'decrease' && item.quantity > 1) {
-                item.quantity -= 1;
+        const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+        const cartContainer = document.getElementById('cartItems');
+        const cartSummary = document.getElementById('cartSummary');
+
+        if (!cartContainer) return;
+
+        if (cart.length === 0) {
+            cartContainer.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="empty-cart">
+                        <h3>Your cart is empty</h3>
+                        <p class="text-muted">Add items to your cart to proceed with checkout.</p>
+                        <a href="shop.html" class="btn btn-primary">Continue Shopping</a>
+                    </div>
+                </div>`;
+            
+            if (cartSummary) {
+                cartSummary.style.display = 'none';
             }
-            
-            // Update stock information
-            item.stock = currentProduct.quantity;
-            
-            localStorage.setItem(cartKey, JSON.stringify(cart));
-            displayCartItems();
-            showToast(`Updated ${item.name} quantity`);
+            return;
         }
+
+        // Show cart summary if it exists
+        if (cartSummary) {
+            cartSummary.style.display = 'block';
+        }
+
+        // Get current products for stock validation
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+
+        cartContainer.innerHTML = cart.map(item => {
+            const currentProduct = products.find(p => p.id === item.id);
+            const inStock = currentProduct && currentProduct.stock > 0;
+            const stockStatus = !inStock ? '<span class="badge bg-danger">Out of Stock</span>' : '';
+            const maxQuantity = currentProduct ? currentProduct.stock : 0;
+
+            return `
+                <div class="card mb-3 cart-item" data-id="${item.id}">
+                    <div class="row g-0">
+                        <div class="col-md-2">
+                            <img src="${item.image || 'images/placeholder.jpg'}" 
+                                 class="img-fluid rounded-start" 
+                                 alt="${item.name}"
+                                 style="height: 150px; object-fit: cover;"
+                                 onerror="this.src='images/placeholder.jpg'">
+                        </div>
+                        <div class="col-md-10">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h5 class="card-title">${item.name}</h5>
+                                        <p class="card-text">
+                                            <small class="text-muted">Price: $${parseFloat(item.price).toFixed(2)}</small>
+                                        </p>
+                                        ${stockStatus}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="quantity-controls">
+                                            <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                                    onclick="updateQuantity(${item.id}, -1)"
+                                                    ${!inStock ? 'disabled' : ''}>
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <span class="quantity mx-2">${item.quantity}</span>
+                                            <button class="btn btn-outline-secondary btn-sm quantity-btn" 
+                                                    onclick="updateQuantity(${item.id}, 1)"
+                                                    ${!inStock || item.quantity >= maxQuantity ? 'disabled' : ''}>
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                        <p class="subtotal mt-2">
+                                            Subtotal: $${(item.quantity * item.price).toFixed(2)}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-2 text-end">
+                                        <button class="btn btn-outline-danger btn-sm remove-btn" 
+                                                onclick="removeFromCart(${item.id})">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        updateCartTotal();
+        updateCartCount();
+
+    } catch (error) {
+        console.error('Error displaying cart items:', error);
+        showToast('Error loading cart items', 'danger');
+    }
+}
+
+// Function to update quantity
+function updateQuantity(productId, change) {
+    try {
+        const cartKey = getUserStorageKey('cart');
+        let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        
+        // Convert IDs to strings for comparison
+        const stringId = String(productId);
+        const cartItem = cart.find(item => String(item.id) === stringId);
+        const currentProduct = products.find(p => String(p.id) === stringId);
+        
+        if (!cartItem || !currentProduct) {
+            console.error('Product not found:', stringId);
+            showToast('Error updating quantity', 'danger');
+            return;
+        }
+
+        const newQuantity = parseInt(cartItem.quantity) + change;
+        
+        // Validate new quantity
+        if (newQuantity <= 0) {
+            removeFromCart(productId);
+            return;
+        }
+
+        if (newQuantity > currentProduct.stock) {
+            showToast('Maximum stock limit reached', 'warning');
+            return;
+        }
+
+        cartItem.quantity = newQuantity;
+        localStorage.setItem(cartKey, JSON.stringify(cart));
+        
+        displayCartItems();
+        updateCartTotal();
+        updateCartCount();
+        showToast('Cart updated successfully', 'success');
     } catch (error) {
         console.error('Error updating quantity:', error);
-        showToast('Error updating quantity. Please try again.');
+        showToast('Error updating quantity', 'danger');
     }
 }
 
 // Remove item from cart
 function removeFromCart(productId) {
-    if (!isUserLoggedIn()) return;
+    try {
+        if (!isUserLoggedIn()) return;
 
-    const cartKey = getUserStorageKey('cart');
-    let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
-    const item = cart.find(item => item.id === productId);
-    
-    if (item) {
-        cart = cart.filter(item => item.id !== productId);
-        localStorage.setItem(cartKey, JSON.stringify(cart));
-        displayCartItems();
-        showToast(`Removed ${item.name} from cart`);
+        const cartKey = getUserStorageKey(config.storageKeys.cart);
+        let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+        
+        // Convert productId to string for consistent comparison
+        const searchId = String(productId);
+        
+        // Find the item using string comparison
+        const item = cart.find(item => String(item.id) === searchId);
+        
+        if (item) {
+            // Filter out the item using string comparison
+            cart = cart.filter(item => String(item.id) !== searchId);
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+            displayCartItems();
+            showToast(`Removed ${item.name} from cart`);
+        } else {
+            console.error('Item not found in cart:', searchId);
+            showToast('Error removing item from cart');
+        }
+    } catch (error) {
+        console.error('Error removing item from cart:', error);
+        showToast('Error removing item from cart');
     }
 }
 
@@ -288,7 +314,7 @@ function clearCart() {
     if (!isUserLoggedIn()) return;
 
     if (confirm('Are you sure you want to clear your cart?')) {
-        const cartKey = getUserStorageKey('cart');
+        const cartKey = getUserStorageKey(config.storageKeys.cart);
         localStorage.removeItem(cartKey);
         displayCartItems();
         showToast('Cart cleared');
@@ -306,7 +332,7 @@ function addOrder() {
     }
 
     // Get the cart data using user-specific key
-    const cartKey = getUserStorageKey('cart');
+    const cartKey = getUserStorageKey(config.storageKeys.cart);
     const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
     if (!cart || cart.length === 0) {
@@ -334,7 +360,7 @@ function addOrder() {
     };
 
     // Store the order data in localStorage using user-specific key
-    const ordersKey = getUserStorageKey('orders');
+    const ordersKey = getUserStorageKey(config.storageKeys.orders);
     let orders = JSON.parse(localStorage.getItem(ordersKey)) || [];
     orders.push(orderData);
     localStorage.setItem(ordersKey, JSON.stringify(orders));
@@ -351,7 +377,7 @@ function addOrder() {
 function updateWishlistCount() {
     if (!isUserLoggedIn()) return;
 
-    const wishlistKey = getUserStorageKey('wishlist');
+    const wishlistKey = getUserStorageKey(config.storageKeys.wishlist);
     const wishlist = JSON.parse(localStorage.getItem(wishlistKey)) || [];
     const wishlistCount = document.getElementById('wishlistCount');
     if (wishlistCount) {
@@ -360,13 +386,39 @@ function updateWishlistCount() {
 }
 
 // Show toast notification
-function showToast(message) {
-    const toastElement = document.getElementById('liveToast');
-    const toastMsg = document.getElementById('toast-message');
-    if (toastMsg && toastElement) {
-        toastMsg.textContent = message;
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
+function showToast(message, type = 'success') {
+    try {
+        const toast = document.getElementById('liveToast');
+        if (toast) {
+            const toastBody = document.getElementById('toast-message');
+            if (toastBody) {
+                toastBody.textContent = message;
+                
+                // Remove existing color classes
+                toast.classList.remove('bg-success', 'bg-danger', 'bg-warning', 'bg-info');
+                
+                // Add appropriate color class
+                switch (type) {
+                    case 'success':
+                        toast.classList.add('bg-success');
+                        break;
+                    case 'danger':
+                        toast.classList.add('bg-danger');
+                        break;
+                    case 'warning':
+                        toast.classList.add('bg-warning');
+                        break;
+                    case 'info':
+                        toast.classList.add('bg-info');
+                        break;
+                }
+                
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+            }
+        }
+    } catch (error) {
+        console.error('Error showing toast:', error);
     }
 }
 
@@ -390,3 +442,46 @@ document.getElementById('checkoutBtn')?.addEventListener('click', (e) => {
     e.preventDefault();
     addOrder();
 });
+
+// Calculate and update cart total
+function updateCartTotal() {
+    try {
+        const cartKey = getUserStorageKey(config.storageKeys.cart);
+        const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+        
+        // Get elements
+        const subtotalElement = document.getElementById('subtotal');
+        const shippingElement = document.getElementById('shipping');
+        const totalElement = document.getElementById('totalPrice');
+        
+        if (!subtotalElement || !shippingElement || !totalElement) {
+            console.error('Required elements not found for cart total update');
+            return;
+        }
+
+        // Calculate subtotal
+        const subtotal = cart.reduce((sum, item) => {
+            return sum + (parseFloat(item.price) * parseInt(item.quantity));
+        }, 0);
+
+        // Fixed shipping cost
+        const shipping = cart.length > 0 ? 5.00 : 0;
+
+        // Calculate total
+        const total = subtotal + shipping;
+
+        // Update display
+        subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
+        shippingElement.textContent = `$${shipping.toFixed(2)}`;
+        totalElement.textContent = `$${total.toFixed(2)}`;
+
+        // Show/hide cart summary
+        const cartSummary = document.getElementById('cartSummary');
+        if (cartSummary) {
+            cartSummary.style.display = cart.length > 0 ? 'block' : 'none';
+        }
+    } catch (error) {
+        console.error('Error updating cart total:', error);
+        showToast('Error updating cart total', 'danger');
+    }
+}

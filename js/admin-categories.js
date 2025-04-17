@@ -81,8 +81,27 @@ async function addCategory(event) {
             newCategory.image = await toBase64(imageFile);
         }
 
+        // Save to localStorage
         categories.push(newCategory);
         localStorage.setItem('categories', JSON.stringify(categories));
+        
+        // Save to backend
+        try {
+            const response = await fetch('http://localhost:3000/categories', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newCategory)
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to save category to backend');
+            }
+        } catch (error) {
+            console.error('Error saving to backend:', error);
+            // Continue with localStorage save even if backend fails
+        }
         
         document.getElementById('addCategoryForm').reset();
         bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
@@ -168,14 +187,35 @@ async function updateCategory(event) {
             image = await toBase64(imageFile);
         }
 
-        categories[categoryIndex] = {
+        const updatedCategory = {
             id: categoryId,
             name: document.getElementById('editCategoryName').value,
             description: document.getElementById('editCategoryDescription').value,
             image: image
         };
 
+        // Update localStorage
+        categories[categoryIndex] = updatedCategory;
         localStorage.setItem('categories', JSON.stringify(categories));
+
+        // Update backend
+        try {
+            const response = await fetch(`http://localhost:3000/categories/${categoryId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(updatedCategory)
+            });
+            
+            if (!response.ok) {
+                throw new Error('Failed to update category in backend');
+            }
+        } catch (error) {
+            console.error('Error updating backend:', error);
+            // Continue with localStorage update even if backend fails
+        }
+
         bootstrap.Modal.getInstance(document.getElementById('editCategoryModal')).hide();
         await loadCategories();
         showToast('Category updated successfully');
