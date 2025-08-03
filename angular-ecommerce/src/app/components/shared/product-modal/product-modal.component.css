@@ -1,0 +1,15 @@
+.modal {
+  z-index: 1050;
+}
+
+.modal-backdrop {
+  z-index: 1040;
+}
+
+.modal-dialog {
+  max-width: 800px;
+}
+
+.badge {
+  font-size: 0.75em;
+} 

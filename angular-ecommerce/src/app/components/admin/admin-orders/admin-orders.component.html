@@ -1,0 +1,316 @@
+<div class="container-fluid">
+  <!-- Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2><i class="bi bi-box-seam me-2"></i>Order Management</h2>
+        <button class="btn btn-outline-secondary btn-sm" (click)="debugOrders()">
+          <i class="bi bi-bug"></i> Debug Orders
+        </button>
+        <button class="btn btn-outline-primary btn-sm ms-2" (click)="createTestOrder()">
+          <i class="bi bi-plus-circle"></i> Create Test Order
+        </button>
+        <button class="btn btn-outline-danger btn-sm ms-2" (click)="clearAllOrders()">
+          <i class="bi bi-trash"></i> Clear All Orders
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="row mb-4">
+    <div class="col-md-2">
+      <div class="card bg-primary text-white">
+        <div class="card-body text-center">
+          <h5 class="card-title">Total Orders</h5>
+          <h3>{{ getOrdersCount() }}</h3>
+          <i class="bi bi-box-seam fs-1"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card bg-warning text-white">
+        <div class="card-body text-center">
+          <h5 class="card-title">Pending</h5>
+          <h3>{{ getPendingOrdersCount() }}</h3>
+          <i class="bi bi-clock fs-1"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card bg-info text-white">
+        <div class="card-body text-center">
+          <h5 class="card-title">Processing</h5>
+          <h3>{{ getProcessingOrdersCount() }}</h3>
+          <i class="bi bi-gear fs-1"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card bg-primary text-white">
+        <div class="card-body text-center">
+          <h5 class="card-title">Shipped</h5>
+          <h3>{{ getShippedOrdersCount() }}</h3>
+          <i class="bi bi-truck fs-1"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card bg-success text-white">
+        <div class="card-body text-center">
+          <h5 class="card-title">Delivered</h5>
+          <h3>{{ getDeliveredOrdersCount() }}</h3>
+          <i class="bi bi-check-circle fs-1"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card bg-success text-white">
+        <div class="card-body text-center">
+          <h5 class="card-title">Revenue</h5>
+          <h3>${{ getTotalRevenue().toFixed(0) }}</h3>
+          <i class="bi bi-currency-dollar fs-1"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <div class="input-group">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="text" class="form-control" placeholder="Search orders..." 
+               [(ngModel)]="searchQuery">
+      </div>
+    </div>
+    <div class="col-md-6">
+      <select class="form-select" [(ngModel)]="selectedStatus">
+        <option [value]="null">All Statuses</option>
+        <option *ngFor="let status of getOrderStatuses()" [value]="status">
+          {{ getStatusDisplay(status) }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h5><i class="bi bi-table me-2"></i>All Orders</h5>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="table-dark">
+                <tr>
+                  <th><i class="bi bi-hash me-1"></i>Order ID</th>
+                  <th><i class="bi bi-calendar me-1"></i>Date</th>
+                  <th><i class="bi bi-person me-1"></i>Customer</th>
+                  <th><i class="bi bi-box me-1"></i>Items</th>
+                  <th><i class="bi bi-currency-dollar me-1"></i>Total</th>
+                  <th><i class="bi bi-flag me-1"></i>Status</th>
+                  <th><i class="bi bi-gear me-1"></i>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of filterOrders()">
+                  <td>
+                    <strong>#{{ order.id }}</strong>
+                  </td>
+                  <td>{{ order.createdAt | date:'MMM dd, yyyy' }}</td>
+                  <td>User #{{ order.userId }}</td>
+                  <td>{{ getTotalItems(order) }} items</td>
+                  <td><strong>${{ order.total.toFixed(2) }}</strong></td>
+                  <td>
+                    <span class="badge" [class]="getStatusBadgeClass(order.status)">
+                      <i class="bi" [class]="getStatusIcon(order.status)"></i>
+                      {{ getStatusDisplay(order.status) }}
+                    </span>
+                  </td>
+                  <td>
+                    <div class="btn-group" role="group">
+                      <button class="btn btn-sm btn-outline-primary me-1" 
+                              (click)="viewOrderDetails(order)"
+                              title="View Details">
+                        <i class="bi bi-eye"></i>
+                        View
+                      </button>
+                      
+                      <!-- Accept Order -->
+                      <button class="btn btn-sm btn-outline-success me-1" 
+                              *ngIf="canPerformAction(order, 'Accept')"
+                              (click)="acceptOrder(order.id)"
+                              title="Accept Order">
+                        <i class="bi bi-check-circle"></i>
+                        Accept
+                      </button>
+                      
+                      <!-- Ship Order -->
+                      <button class="btn btn-sm btn-outline-info me-1" 
+                              *ngIf="canPerformAction(order, 'Ship')"
+                              (click)="shipOrder(order.id)"
+                              title="Ship Order">
+                        <i class="bi bi-truck"></i>
+                        Ship
+                      </button>
+                      
+                      <!-- Deliver Order -->
+                      <button class="btn btn-sm btn-outline-success me-1" 
+                              *ngIf="canPerformAction(order, 'Deliver')"
+                              (click)="deliverOrder(order.id)"
+                              title="Mark as Delivered">
+                        <i class="bi bi-check-circle"></i>
+                        Deliver
+                      </button>
+                      
+                      <!-- Cancel Order -->
+                      <button class="btn btn-sm btn-outline-danger" 
+                              *ngIf="canPerformAction(order, 'Cancel')"
+                              (click)="cancelOrder(order.id)"
+                              title="Cancel Order">
+                        <i class="bi bi-x-circle"></i>
+                        Cancel
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal fade" 
+     [class.show]="showModal" 
+     [style.display]="showModal ? 'block' : 'none'"
+     tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" *ngIf="selectedOrder">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="bi bi-box-seam me-2"></i>Order #{{ selectedOrder.id }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <strong>Order Date:</strong>
+            <p>{{ selectedOrder.createdAt | date:'longDate' }}</p>
+          </div>
+          <div class="col-md-6">
+            <strong>Customer ID:</strong>
+            <p>{{ selectedOrder.userId }}</p>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <strong>Status:</strong>
+          <p>
+            <span class="badge" [class]="getStatusBadgeClass(selectedOrder.status)">
+              <i class="bi" [class]="getStatusIcon(selectedOrder.status)"></i>
+              {{ getStatusDisplay(selectedOrder.status) }}
+            </span>
+          </p>
+        </div>
+        
+        <h6><i class="bi bi-box me-2"></i>Order Items:</h6>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of selectedOrder.items">
+                <td>
+                  <div class="d-flex align-items-center">
+                    <img [src]="item.image" 
+                         [alt]="item.name" 
+                         class="order-item-image me-2"
+                         style="width: 40px; height: 40px; object-fit: cover;">
+                    <span>{{ item.name }}</span>
+                  </div>
+                </td>
+                <td>${{ item.price.toFixed(2) }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ (item.price * item.quantity).toFixed(2) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="row mt-3">
+          <div class="col-md-6 offset-md-6">
+            <div class="d-flex justify-content-between mb-2">
+              <span>Subtotal:</span>
+              <span>${{ selectedOrder.subtotal.toFixed(2) }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span>Shipping:</span>
+              <span>${{ selectedOrder.shipping.toFixed(2) }}</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <strong>Total:</strong>
+              <strong>${{ selectedOrder.total.toFixed(2) }}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status History Section -->
+        <div class="mt-4">
+          <h6><i class="bi bi-clock-history me-2"></i>Status History:</h6>
+          <div class="status-history-container" style="max-height: 200px; overflow-y: auto;">
+            <div *ngIf="getStatusHistory(selectedOrder).length === 0" class="text-muted">
+              No status changes recorded
+            </div>
+            <div *ngFor="let change of getStatusHistory(selectedOrder)" class="status-change-item mb-2 p-2 border rounded">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge me-2" [class]="getStatusBadgeClass(change.fromStatus)">
+                    {{ change.fromStatus }}
+                  </span>
+                  <i class="bi bi-arrow-right"></i>
+                  <span class="badge ms-2" [class]="getStatusBadgeClass(change.toStatus)">
+                    {{ change.toStatus }}
+                  </span>
+                </div>
+                <small class="text-muted">{{ change.changedAt | date:'short' }}</small>
+              </div>
+              <div class="mt-1">
+                <small class="text-muted">
+                  <i class="bi bi-person me-1"></i>{{ change.changedBy }}
+                  <span *ngIf="change.notes" class="ms-2">
+                    <i class="bi bi-chat-text me-1"></i>{{ change.notes }}
+                  </span>
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">
+          <i class="bi bi-x-circle me-2"></i>Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" 
+     *ngIf="showModal" 
+     (click)="closeModal()"></div> 

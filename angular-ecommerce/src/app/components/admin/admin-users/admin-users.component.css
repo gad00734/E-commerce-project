@@ -1,0 +1,17 @@
+.badge {
+  font-size: 0.75em;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  border-top: none;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.btn-group {
+  gap: 0.25rem;
+} 

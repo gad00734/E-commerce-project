@@ -1,0 +1,16 @@
+.product-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.badge {
+  font-size: 0.75em;
+} 

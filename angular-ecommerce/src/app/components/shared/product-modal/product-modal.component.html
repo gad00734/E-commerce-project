@@ -1,0 +1,52 @@
+<div class="modal fade" 
+     [class.show]="showModal" 
+     [style.display]="showModal ? 'block' : 'none'"
+     tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" *ngIf="product">
+      <div class="modal-header">
+        <h5 class="modal-title">{{ product.name }}</h5>
+        <button type="button" class="btn-close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <img [src]="product.image" 
+                 class="img-fluid" 
+                 [alt]="product.name">
+          </div>
+          <div class="col-md-6">
+            <h4>{{ product.name }}</h4>
+            <p class="text-muted">{{ product.description }}</p>
+            <div class="mb-3">
+              <span class="h3 text-primary">${{ product.price }}</span>
+              <span class="badge bg-secondary ms-2" *ngIf="product.stock === 0">Out of Stock</span>
+            </div>
+            <div class="mb-3">
+              <strong>Category:</strong> {{ product.category }}
+            </div>
+            <div class="mb-3">
+              <strong>Stock:</strong> {{ product.stock }} units
+            </div>
+            <div class="d-grid gap-2">
+              <button class="btn btn-primary" 
+                      (click)="onAddToCart()"
+                      [disabled]="product.stock === 0">
+                Add to Cart
+              </button>
+              <button class="btn btn-outline-secondary" 
+                      (click)="onAddToWishlist()">
+                Add to Wishlist
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" 
+     *ngIf="showModal" 
+     (click)="onClose()"></div> 

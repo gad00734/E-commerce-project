@@ -1,0 +1,96 @@
+<!-- Admin Panel Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark admin-navbar">
+  <div class="container-fluid">
+    <span class="navbar-brand">Admin Panel</span>
+    <div class="navbar-nav me-auto">
+      <a class="nav-link active" href="#">Dashboard</a>
+      <a class="nav-link" routerLink="/admin/products">Manage Products</a>
+      <a class="nav-link" routerLink="/admin/categories">Manage Categories</a>
+      <a class="nav-link" routerLink="/admin/orders">Orders</a>
+      <a class="nav-link" routerLink="/admin/users">Users</a>
+    </div>
+    <div class="navbar-nav ms-auto">
+      <span class="navbar-text me-3">Welcome, admin&#64;example.com</span>
+      <button class="btn btn-outline-light btn-sm" (click)="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="container-fluid mt-4">
+  <!-- Summary Cards -->
+  <div class="row mb-4">
+    <div class="col-md-3">
+      <div class="card summary-card">
+        <div class="card-body text-center">
+          <h2 class="card-number">{{ totalOrders }}</h2>
+          <p class="card-text">Total Orders</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card summary-card">
+        <div class="card-body text-center">
+          <h2 class="card-number">{{ totalProducts }}</h2>
+          <p class="card-text">Products</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card summary-card">
+        <div class="card-body text-center">
+          <h2 class="card-number">{{ totalCategories }}</h2>
+          <p class="card-text">Categories</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card summary-card">
+        <div class="card-body text-center">
+          <h2 class="card-number">${{ totalRevenue.toFixed(2) }}</h2>
+          <p class="card-text">Total Revenue</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Orders Section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Recent Orders</h5>
+          <button class="btn btn-success btn-sm" routerLink="/admin/orders">View All</button>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Date</th>
+                  <th>Customer</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of recentOrders">
+                  <td><strong>#{{ order.id }}</strong></td>
+                  <td>{{ order.createdAt | date:'MMM dd, yyyy, h:mm a' }}</td>
+                  <td>{{ order.userId }}</td>
+                  <td><strong>${{ order.total.toFixed(2) }}</strong></td>
+                  <td>
+                    <span class="badge" [class]="getStatusBadgeClass(order.status)">
+                      {{ getStatusDisplay(order.status) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

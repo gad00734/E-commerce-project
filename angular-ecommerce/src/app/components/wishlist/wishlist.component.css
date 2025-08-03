@@ -1,0 +1,21 @@
+.wishlist-item-image {
+  height: 200px;
+  object-fit: cover;
+}
+
+.card {
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.display-1 {
+  font-size: 4rem;
+} 
